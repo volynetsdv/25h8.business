@@ -61,7 +61,7 @@ namespace BackgroundTasks
         private static async Task<string> GetFeed()
         {
             string feed = null;
-            //string feed = new XmlDocument();
+            //XmlDocument feed = new XmlDocument();
             try
             {
                 var client = new HttpClient();
@@ -77,9 +77,12 @@ namespace BackgroundTasks
         }
         private static async void Save_feed() //все плохо) 
         {
+            XmlDocument saveusxml1 = new XmlDocument();
+            XmlDocument saveusxml2 = new XmlDocument();
             var folder = ApplicationData.Current.LocalFolder;
             var BID = JsonConvert.DeserializeObject<Deserialize.BID>(feed);
             var BIDDING = JsonConvert.DeserializeObject<Deserialize.BIDDING>(feed);
+            saveusxml1.LoadXml(BID.title);
             if(File.Exists("serrialized_data.txt") in folder)
             {
                 
