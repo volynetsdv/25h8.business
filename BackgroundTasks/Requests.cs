@@ -10,6 +10,8 @@ namespace BackgroundTasks
 {
     public sealed class Requests
     {
+        static string feedUrl = @"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction";
+
         static HttpClient client = new HttpClient();
         //Request inf for BID
         static async Task<BID> GetBIDAsync(string feedUrl)
@@ -33,13 +35,13 @@ namespace BackgroundTasks
             }
             return bidding;
         }
-        public async static void Runner()
+        public async void Runner()
         {
             await RunAsync();
         }
         static async Task RunAsync()
         {
-            client.BaseAddress = new Uri(BackgroundTasks.RunClass.feedUrl);
+            client.BaseAddress = new Uri(feedUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -48,8 +50,8 @@ namespace BackgroundTasks
                 BID bid = new BID();
                 BIDDING bidding = new BIDDING();
                 // Get inf from API
-                bid = await GetBIDAsync(BackgroundTasks.RunClass.feedUrl);
-                bidding = await GetBIDDINGAsync(BackgroundTasks.RunClass.feedUrl);
+                bid = await GetBIDAsync(feedUrl); 
+                bidding = await GetBIDDINGAsync(feedUrl);
 
             }
             catch (Exception e)
@@ -59,23 +61,5 @@ namespace BackgroundTasks
         }
 
     }
-    public sealed class BID
-    {
-        public string title { get; set; }
-        public string proc { get; set; }
-        public string contractorName { get; set; }
-        public string LogogURL { get; set; }
-        public int Id { get; set; }
-    }
-    public sealed class BIDDING
-    {
-        public string title { get; set; }
-        public string proc { get; set; }
-        public string contractorName { get; set; }
-        public string PublicURL { get; set; }
-        public string LogogURL { get; set; }
-        public int Id { get; set; }
-        public string state { get; set; }
 
-    }
 }
