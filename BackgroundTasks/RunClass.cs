@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Windows.ApplicationModel.Background;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
@@ -27,10 +28,10 @@ namespace BackgroundTasks
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
 
             // Download the feed.
-            var feed = await GetFeed();
+            var feed = await GetFeed(); // получает значение от метода GetFeed и передает ниже в UpdateTile
 
             // Update the live tile with the feed items.
-            UpdateTile(feed);
+            UpdateTile(feed); //принимает значение от GetFeed
 
             // Inform the system that the task is finished.
             deferral.Complete();
@@ -66,8 +67,10 @@ namespace BackgroundTasks
             {
                 var client = new HttpClient();
                 var response = await client.GetAsync(new Uri(@"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction"));
-                feed = await response.Content.ReadAsStringAsync();
-
+                if (response.IsSuccessStatusCode)
+                {
+                    feed = await response.Content.ReadAsStringAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -75,29 +78,29 @@ namespace BackgroundTasks
             }
             return feed;
         }
-        private static async void Save_feed() //все плохо) 
+
+        //отфильтровываем лишнее из GET запроса и сохраняем все в XML
+        private static void Save_feed(string feed) 
         {
-            XmlDocument saveusxml1 = new XmlDocument();
-            XmlDocument saveusxml2 = new XmlDocument();
-            var folder = ApplicationData.Current.LocalFolder;
-            var BID = JsonConvert.DeserializeObject<Deserialize.BID>(feed);
+            var BID = JsonConvert.DeserializeObject<Deserialize.BID>(feed); //убираем все лишнее из ответа API
+            XmlSerializer BID_saver = new XmlSerializer(typeof(Deserialize.BID)); 
+
             var BIDDING = JsonConvert.DeserializeObject<Deserialize.BIDDING>(feed);
-            saveusxml1.LoadXml(BID.title);
-            if(File.Exists("serrialized_data.txt") in folder)
-            {
-                
-                using (StreamWriter DestinationWriter = File.CreateText(UserDirectory + "CopiedFile.txt"))
+            XmlSerializer BIDDING_saver = new XmlSerializer(typeof(Deserialize.BIDDING));
+
+            if (BID.entityType == "bid")
+                using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                 {
-                    await CopyFilesAsync(SourceReader, DestinationWriter);
+                    BID_saver.Serialize(fs, BID);
                 }
-            }
             else
-            {
-                await folder.CreateFileAsync("serrialized_data.txt");
-            }
+                using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                {
+                    BIDDING_saver.Serialize(fs, BIDDING);
+                }
         }
 
-        private static void UpdateTile(string feed) //Все еще хуже. Трогать пока не стал, нужно разобраться с сохранением
+        private static void UpdateTile() //будет переделан, когда разберусь с сохранением. входящим аргументом был string feed
         {
             // Create a tile update manager for the specified syndication feed.
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
@@ -108,7 +111,7 @@ namespace BackgroundTasks
             //int itemCount = 0;
 
             // Create a tile notification for each feed item.
-
+            StreamReader rd_file = new StreamReader("title.xml");// здесь должен быть адрес файла из строки 97
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150Text03);
 
             //var title = feed;
@@ -134,6 +137,6 @@ namespace BackgroundTasks
 
         static string textElementName = "title";
 
-        public static string feed { get; private set; }
+
     }
 }

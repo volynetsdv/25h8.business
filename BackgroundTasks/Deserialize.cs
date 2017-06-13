@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Xml.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace BackgroundTasks
     {
         public sealed class BID
         {
+            [JsonProperty(PropertyName = "entityType")]
+            public string entityType { get; set; }
             [JsonProperty(PropertyName = "title")]
             public string title { get; set; }
             [JsonProperty(PropertyName = "proc")]
@@ -24,6 +27,8 @@ namespace BackgroundTasks
         }
         public sealed class BIDDING
         {
+            [JsonProperty(PropertyName = "entityType")]
+            public string entityType { get; set; }
             [JsonProperty(PropertyName = "title")]
             public string title { get; set; }
             [JsonProperty(PropertyName = "proc")]

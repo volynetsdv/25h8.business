@@ -30,7 +30,6 @@ namespace _25h8.business
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            BackgroundTasks.Requests.Runner();
         }
 
         /// <summary>
