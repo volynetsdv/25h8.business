@@ -52,7 +52,7 @@ namespace BackgroundTasks
             try
             {
                 var client = new HttpClient();
-                var response = await client.GetAsync(new Uri(@"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction"));
+                var response = await client.GetAsync(new Uri(@"https://stage.bankfund.sale/api/search?index=trade&limit=10&offset=0&populate=owner&project=MAIN"));
                 if (response.IsSuccessStatusCode)
                 {
                     feed = await response.Content.ReadAsStringAsync();

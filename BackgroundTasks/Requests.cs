@@ -11,7 +11,7 @@ namespace BackgroundTasks
     //Воторой вариант получения данных от АПИ. Слепил из примеров на MSDN
     public sealed class Requests
     {
-        static string feedUrl = @"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction";
+        static string feedUrl = @"https://stage.bankfund.sale/api/search?index=trade&limit=10&offset=0&populate=owner&project=MAIN";
 
         static HttpClient client = new HttpClient();
         //Request inf for BID
