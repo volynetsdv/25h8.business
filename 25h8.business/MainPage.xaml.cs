@@ -27,10 +27,18 @@ namespace _25h8.business
         {
             this.InitializeComponent();
         }
+
+        //этот и ниже метод вместе с манифестом(раздел Обїявления - точка входа) должны запускать фоновую службу. 
+        //Они выполняются, но судя по брикпоинтам службу не запускают. Что не так??
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            this.RegisterBackgroundTask();
+        }
         private async void RegisterBackgroundTask()
         {
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-            if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed)
+            if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
+                backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy) 
             {
                 foreach (var task in BackgroundTaskRegistration.AllTasks)
                 {
@@ -43,7 +51,7 @@ namespace _25h8.business
                 BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
                 taskBuilder.Name = taskName;
                 taskBuilder.TaskEntryPoint = taskEntryPoint;
-                taskBuilder.SetTrigger(new TimeTrigger(30, false));
+                taskBuilder.SetTrigger(new TimeTrigger(30, false)); 
                 var registration = taskBuilder.Register();
             }
         }
