@@ -10,7 +10,7 @@ namespace BackgroundTasks
 {
     class Deserialize
     {
-        public sealed class BID
+        public class BID
         {
             [JsonProperty(PropertyName = "entityType")]
             public string entityType { get; set; }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Net.Http.Formatting;
 using System.Diagnostics;
 
+
+
 namespace BackgroundTasks
 {   
     //Воторой вариант получения данных от АПИ. Слепил из примеров на MSDN
@@ -36,16 +38,13 @@ namespace BackgroundTasks
             }
             return bidding;
         }
-        public async void Runner()
-        {
-            await RunAsync();
-        }
-        static async Task RunAsync()
+
+        public static async Task<string> RunAsync()
         {
             client.BaseAddress = new Uri(feedUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
+            string feed = null;
             try
             {
                 Deserialize.BID bid = new Deserialize.BID();
@@ -53,12 +52,23 @@ namespace BackgroundTasks
                 // Get inf from API
                 bid = await GetBIDAsync(feedUrl); 
                 bidding = await GetBIDDINGAsync(feedUrl);
+                if (bid.entityType == "bid")
+                {
+                    feed = bid.ToString();
+                    return feed;
+                }
+                else
+                {
+                    feed = bidding.ToString();
+                    return feed;
+                }
 
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
             }
+            return feed;
         }
 
     }

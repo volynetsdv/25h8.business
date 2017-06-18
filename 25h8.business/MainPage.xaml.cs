@@ -28,8 +28,11 @@ namespace _25h8.business
             this.InitializeComponent();
         }
 
-        //этот и ниже метод вместе с манифестом(раздел Обїявления - точка входа) должны запускать фоновую службу. 
+        //этот и ниже метод вместе с манифестом(раздел Объявления - точка входа) должны запускать фоновую службу. 
         //Они выполняются, но судя по брикпоинтам службу не запускают. Что не так??
+        private const string taskName = "RunClass";
+        private const string taskEntryPoint = "BackgroundTasks.RunClass";
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.RegisterBackgroundTask();
@@ -40,7 +43,7 @@ namespace _25h8.business
             if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
                 backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy) 
             {
-                foreach (var task in BackgroundTaskRegistration.AllTasks)
+             foreach (var task in BackgroundTaskRegistration.AllTasks)
                 {
                     if (task.Value.Name == taskName)
                     {
@@ -55,8 +58,5 @@ namespace _25h8.business
                 var registration = taskBuilder.Register();
             }
         }
-
-        private const string taskName = "RunClass";
-        private const string taskEntryPoint = "BackgroundTasks.RunClass";
     }
 }
