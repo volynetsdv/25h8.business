@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Source>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_256x256.png</Source>
+    <SmallTileSource>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_256x256.png</SmallTileSource>
+    <MediumTileSource>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_256x256.png</MediumTileSource>
+    <WideTileSource>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_1240x600.png</WideTileSource>
+    <LargeTileSource>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_256x256.png</LargeTileSource>
+    <AppIconSource>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_256x256.png</AppIconSource>
+    <SplashScreenSource>I:\IT\C# Projects\UWP_projects\BankFund.sale\Logo_256x256.png</SplashScreenSource>
+  </PropertyGroup>
+</Project>

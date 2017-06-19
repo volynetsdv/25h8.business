@@ -1,0 +1,2 @@
+I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\25h8.business.csproj;x86
+I:\IT\C# Projects\UWP_projects\25h8.business\BackgroundTasks\BackgroundTasks.csproj;x86

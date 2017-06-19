@@ -137,6 +137,7 @@ namespace BackgroundTasks
 
         //В метод нужно добавить перебор тайтлов,но для начала 
         //хочу добиться вывода на плитку хотя бы первого значения. Дальше все будет 
+        //с реализацией сильно поможет статья для Вин8: https://habrahabr.ru/post/149219/
         private static void UpdateTile()           
         {
             // Create a tile update manager for the specified syndication feed.
@@ -145,9 +146,9 @@ namespace BackgroundTasks
             updater.Clear();
 
             // Create a tile notification 
-            
+            //Для разных размеров плитки создадим  несколько таких строчек с "шаблонами тайлов":
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150Text03);
-            //здесь должен быть цикл
+            //здесь должен быть цикл. [0] - это индекс элемента
             tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText("title.xml");
 
             // Create a new tile notification.
