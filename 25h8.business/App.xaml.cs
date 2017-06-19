@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -33,6 +34,29 @@ namespace _25h8.business
             
         }
 
+        //играемя с переходом по ссылке через клик на плитку
+        // The URI to launch
+        static string uriToLaunch = @"https://stage.25h8.business/#!/landing";
+
+        // Create a Uri object from a URI string 
+        Uri uri = new Uri(uriToLaunch);
+
+        // Launch the URI
+        async void DefaultLaunch()
+        {
+            // Launch the URI
+            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+
+            if (success)
+            {
+                // URI launched
+            }
+            else
+            {
+                // URI launch failed
+            }
+        }
+
         /// <summary>
         /// Вызывается при обычном запуске приложения пользователем.  Будут использоваться другие точки входа,
         /// например, если приложение запускается для открытия конкретного файла.
@@ -47,6 +71,7 @@ namespace _25h8.business
             if (rootFrame == null)
             {
                 // Создание фрейма, который станет контекстом навигации, и переход к первой странице
+
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
@@ -74,6 +99,8 @@ namespace _25h8.business
             }
         }
 
+
+
         /// <summary>
         /// Вызывается в случае сбоя навигации на определенную страницу
         /// </summary>
@@ -83,6 +110,8 @@ namespace _25h8.business
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
+
+
 
         /// <summary>
         /// Вызывается при приостановке выполнения приложения.  Состояние приложения сохраняется
