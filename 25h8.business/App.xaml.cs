@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,6 +36,9 @@ namespace _25h8.business
         }
 
         //играемя с переходом по ссылке через клик на плитку
+
+            
+
         // The URI to launch
         static string uriToLaunch = @"https://stage.25h8.business/#!/landing";
 
@@ -64,7 +68,7 @@ namespace _25h8.business
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+            var rootFrame = Window.Current.Content as Frame;
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна

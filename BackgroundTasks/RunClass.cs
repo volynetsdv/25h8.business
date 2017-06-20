@@ -88,7 +88,7 @@ namespace BackgroundTasks
 
             // Получаем две коллекции объектов (BID и BIDDING).
             // В результате операции исключаем из списка "result" не нужны полня
-            // Вероятнее всего здесь ошибка и в один объект запихнет все данные, которые к нему относятся
+            // Вопрос: не запихнет ли оно в один объект все что у нас есть?
             IList<BID> bidSearchResults = new List<BID>();
             foreach (JToken res in result)
             {
@@ -121,7 +121,7 @@ namespace BackgroundTasks
 
             for (int i = 0; i < bidSearchResults.Count; i++)
             {
-                if (bidSearchResults[i].entityType.Contains(null))    // должно быть так if (bidSearchResults[i].entityType.Contains("bid")) 
+                if (bidSearchResults[i].entityType.Contains("bid"))   
                     using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
                         BID_saver.Serialize(fs, bidSearchResults);

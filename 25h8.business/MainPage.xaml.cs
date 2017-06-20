@@ -28,8 +28,7 @@ namespace _25h8.business
             this.InitializeComponent();
         }
 
-        //этот и ниже метод вместе с манифестом(раздел Обїявления - точка входа) должны запускать фоновую службу. 
-        //Они выполняются, но судя по брикпоинтам службу не запускают. Что не так??
+        //этот и ниже метод вместе с манифестом(раздел Объявления - точка входа) запускают фоновую службу. 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.RegisterBackgroundTask();
