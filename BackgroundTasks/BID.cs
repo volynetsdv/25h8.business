@@ -4,7 +4,7 @@ using System;
 namespace BackgroundTasks
 {
     [Serializable]
-    public class BID 
+    internal class BID 
     { 
       
         [JsonProperty(PropertyName = "entityType")]

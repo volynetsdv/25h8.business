@@ -18,6 +18,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace _25h8.business
 {
+    partial class MainPage
+    {
+        async void App_Suspending(Object sender,Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            // TODO: This is the time to save app data in case the process is terminated
+        }
+    }
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
@@ -26,7 +33,13 @@ namespace _25h8.business
         public MainPage()
         {
             this.InitializeComponent();
+            Application.Current.Exit(); //команда завершения работы приложенияю В теории фоновая задача 
+                                        //должна проходить регистрацию (процес на столько быстр, что без брикпоинтов пользователь 
+                                        //практически ничего не заметит) и после - завершаться. Тем не менее отдельный фоновый процесс после регистрации
+                                        //будет оставаться активным. Так же есть более эффективная альтернатива: https://docs.microsoft.com/en-us/uwp/api/Windows.ApplicationModel.Core.CoreApplication#Windows_ApplicationModel_Core_CoreApplication_EnteredBackground 
+
         }
+
 
         //этот и ниже метод вместе с манифестом(раздел Объявления - точка входа) запускают фоновую службу. 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -37,7 +50,7 @@ namespace _25h8.business
         {
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
             if (backgroundAccessStatus == BackgroundAccessStatus.AlwaysAllowed ||
-                backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy) 
+                backgroundAccessStatus == BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
             {
                 foreach (var task in BackgroundTaskRegistration.AllTasks)
                 {
@@ -50,7 +63,7 @@ namespace _25h8.business
                 BackgroundTaskBuilder taskBuilder = new BackgroundTaskBuilder();
                 taskBuilder.Name = taskName;
                 taskBuilder.TaskEntryPoint = taskEntryPoint;
-                taskBuilder.SetTrigger(new TimeTrigger(30, false)); 
+                taskBuilder.SetTrigger(new TimeTrigger(30, false));
                 var registration = taskBuilder.Register();
             }
         }

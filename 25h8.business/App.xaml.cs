@@ -35,12 +35,13 @@ namespace _25h8.business
             
         }
 
-        //играемя с переходом по ссылке через клик на плитку
+    
+    //играемя с переходом по ссылке через клик на плитку
 
-            
 
-        // The URI to launch
-        static string uriToLaunch = @"https://stage.25h8.business/#!/landing";
+
+    // The URI to launch
+    static string uriToLaunch = @"https://stage.25h8.business/#!/landing";
 
         // Create a Uri object from a URI string 
         Uri uri = new Uri(uriToLaunch);

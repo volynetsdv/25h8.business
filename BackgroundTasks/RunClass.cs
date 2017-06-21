@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Net.Security;
+using Windows.Web.Http;
+//using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -17,12 +18,16 @@ using Windows.UI.Notifications;
 using Windows.System.Threading;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
+using Windows.Web.Http.Filters;
+using Windows.Security.Cryptography.Certificates;
 
 namespace BackgroundTasks
 {
     public sealed class RunClass : IBackgroundTask
     {
-            //сделано по образу и подобию из: https://docs.microsoft.com/ru-ru/windows/uwp/launch-resume/update-a-live-tile-from-a-background-task
+
+        //сделано по образу и подобию из: https://docs.microsoft.com/ru-ru/windows/uwp/launch-resume/update-a-live-tile-from-a-background-task
 
 
             //мой Get не захватывает новую ссылку на API: 
@@ -57,24 +62,38 @@ namespace BackgroundTasks
         //получаем ответ от JSON в виде строки
         private static async Task<string> GetFeed()
         {
-            //try
-            //{
-                var client = new HttpClient();
+            try
+            {
+                //var client = new HttpClient();
+                var filter = new HttpBaseProtocolFilter();
+#if DEBUG
+                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Expired);
+                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Untrusted);
+                filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.InvalidName);
+#endif
+                using (var httpClient = new HttpClient(filter))
+                {
+                    HttpResponseMessage jsonText = await httpClient.GetAsync(new Uri(feedUrl));
 
-                HttpResponseMessage jsonText = await client.GetAsync(new Uri(feedUrl));
-                if (jsonText!=null)
-                    return await jsonText.Content.ReadAsStringAsync();
-                else
-                    return null;
-            //}
+                    if (jsonText != null)
+                        return await jsonText.Content.ReadAsStringAsync();
+                    else
+                        return null;
+                }
 
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine(ex.ToString());
-            //    return "";
-            //}
+
+
+            }
+
+            catch (Exception ex)
+            {
+                
+                Debug.WriteLine(ex.ToString());
+                return "";
+            }
 
         }
+
 
         // Проводим дессериализацию и сохраняем результат в файл
         // Дессериализация выполняется по следующему примеру: 
