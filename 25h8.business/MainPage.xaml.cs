@@ -18,13 +18,6 @@ using Windows.UI.Xaml.Navigation;
 
 namespace _25h8.business
 {
-    partial class MainPage
-    {
-        async void App_Suspending(Object sender,Windows.ApplicationModel.SuspendingEventArgs e)
-        {
-            // TODO: This is the time to save app data in case the process is terminated
-        }
-    }
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
