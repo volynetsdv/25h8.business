@@ -26,10 +26,10 @@ namespace BackgroundTasks
 
 
             //мой Get не захватывает новую ссылку на API: 
-            //static string feedUrl = @"https://stage.bankfund.sale/api/search?index=trade&limit=10&offset=0&populate=owner&project=MAIN";
+            static string feedUrl = @"https://stage.bankfund.sale/api/search?index=trade&limit=10&offset=0&populate=owner&project=MAIN";
 
 
-        static string feedUrl = @"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction";
+        //static string feedUrl = @"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction";
         
         //здесь начинается выполнение фоновой задачи
         public async void Run(IBackgroundTaskInstance taskInstance)
@@ -41,8 +41,11 @@ namespace BackgroundTasks
             // Download the feed.
             var jsonText = await GetFeed(); // получает значение от метода GetFeed и передает ниже в UpdateTile
 
-            //save feed to XML
-            Save_data(jsonText);
+            //save feed to XML or end the task
+            if (jsonText!=null)
+                SaveData(jsonText);
+            else
+                deferral.Complete();
 
             // Update the live tile with the feed items.
             UpdateTile();
@@ -54,34 +57,34 @@ namespace BackgroundTasks
         //получаем ответ от JSON в виде строки
         private static async Task<string> GetFeed()
         {
-            try
-            {
+            //try
+            //{
                 var client = new HttpClient();
+
                 HttpResponseMessage jsonText = await client.GetAsync(new Uri(feedUrl));
                 if (jsonText!=null)
-                return await jsonText.Content.ReadAsStringAsync();
+                    return await jsonText.Content.ReadAsStringAsync();
                 else
-                    return "";
-            }
+                    return null;
+            //}
 
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-                return "";
-            }
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(ex.ToString());
+            //    return "";
+            //}
 
         }
 
         // Проводим дессериализацию и сохраняем результат в файл
         // Дессериализация выполняется по следующему примеру: 
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
-        private void Save_data(string jsonText)
+        private void SaveData(string jsonText)
         {
+
+            //string jsonText = @" ЗДЕСЬ ДОЛЖЕН БЫТЬ JSON текст";
             JObject json = new JObject();
             json = JObject.Parse(jsonText);
-
-            
-            //string jsonText = @" ЗДЕСЬ ДОЛЖЕН БЫТЬ JSON текст";
 
             // get JSON result objects into a list
             IList<JToken> result = json["result"].ToList(); //<<<<< Ошибка. переменной присваивается null
@@ -116,20 +119,20 @@ namespace BackgroundTasks
                         // Url = http://www.imdb.com/name/nm0385296/
 
             //Проводим серриализацию объектов полученных объектов в XML и сохраняем в файл
-            XmlSerializer BID_saver = new XmlSerializer(typeof(BID));
-            XmlSerializer BIDDING_saver = new XmlSerializer(typeof(BIDDING));
+            XmlSerializer BidSaver = new XmlSerializer(typeof(BID));
+            XmlSerializer BiddingSaver = new XmlSerializer(typeof(BIDDING));
 
             for (int i = 0; i < bidSearchResults.Count; i++)
             {
-                if (bidSearchResults[i].entityType.Contains("bid"))   
+                if (bidSearchResults[i].EntityType.Contains("bid"))   
                     using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
-                        BID_saver.Serialize(fs, bidSearchResults);
+                        BidSaver.Serialize(fs, bidSearchResults[i]);
                     }
                 else
                     using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
-                        BIDDING_saver.Serialize(fs, biddingSearchResults);
+                        BiddingSaver.Serialize(fs, biddingSearchResults[i]);
                     }
             }
 
