@@ -21,6 +21,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using Windows.Web.Http.Filters;
 using Windows.Security.Cryptography.Certificates;
+using System.Text.RegularExpressions;
 
 namespace BackgroundTasks
 {
@@ -63,11 +64,12 @@ namespace BackgroundTasks
 
         }
         //получаем ответ от JSON в виде строки
+        //вынуждены использовать HttpBaseProtocolFilter для получения данных от не защищенного АПИ (отсувствует сертификат SSL)
         private static async Task<string> GetFeed()
         {
             try
             {
-                //var client = new HttpClient();
+                
                 var filter = new HttpBaseProtocolFilter();
 #if DEBUG
                 filter.IgnorableServerCertificateErrors.Add(ChainValidationResult.Expired);
@@ -76,10 +78,15 @@ namespace BackgroundTasks
 #endif
                 using (var httpClient = new HttpClient(filter))
                 {
-                    HttpResponseMessage jsonText = await httpClient.GetAsync(new Uri(feedUrl));
+                    HttpResponseMessage response = await httpClient.GetAsync(new Uri(feedUrl));
 
+                    string httpSerialize = await response.Content.ReadAsStringAsync();
+                    string parsedString = Regex.Unescape(httpSerialize);
+                    byte[] isoBites = Encoding.GetEncoding("ISO-8859-1").GetBytes(parsedString);
+                    string jsonText = Encoding.UTF8.GetString(isoBites, 0, isoBites.Length);
                     if (jsonText != null)
-                        return await jsonText.Content.ReadAsStringAsync();
+                        return jsonText;
+                   
                     else
                         return null;
                 }
@@ -100,15 +107,11 @@ namespace BackgroundTasks
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
         private void SaveData(string jsonText)
         {
-            //StorageFile openFile = await localFolder.GetFileAsync("title.xml");
-            //var stream = await newFile.OpenAsync(FileAccessMode.ReadWrite); //открываем файл для работы с ним
-
-            //string jsonText = @" ЗДЕСЬ ДОЛЖЕН БЫТЬ JSON текст";
             JObject json = new JObject();
             json = JObject.Parse(jsonText);
 
             // get JSON result objects into a list
-            IList<JToken> result = json["result"].ToList(); //<<<<< Ошибка. переменной присваивается null
+            IList<JToken> result = json["result"]["owner"].Children().ToList(); //[]
 
             // Получаем две коллекции объектов (BID и BIDDING).
             // В результате операции исключаем из списка "result" не нужны полня
@@ -135,7 +138,7 @@ namespace BackgroundTasks
             // Content = [1] In 2006, she released her debut album...
             // Url = http://en.wikipedia.org/wiki/Paris_Hilton
 
-            //Проводим серриализацию объектов полученных объектов в XML и сохраняем в файл
+            //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
             XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
             XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
@@ -146,28 +149,12 @@ namespace BackgroundTasks
             for (int i = 0; i < bidSearchResults.Count; i++)
             {
                 if (bidSearchResults[i].EntityType.Contains("bid"))
-
-                    //{
-                    //    //по инструкции: Writing text to a file by using a stream (4 steps)
-                    //    //https://docs.microsoft.com/en-us/windows/uwp/files/quickstart-reading-and-writing-files
-                    //    using (var outputStream = stream.GetOutputStreamAt(0))
-                    //    {
-                    //        using (var dataWriter = new Windows.Storage.Streams.DataWriter(outputStream))
-                    //        {
-                    //            dataWriter.WriteString();
-                    //            await dataWriter.StoreAsync();
-                    //            await outputStream.FlushAsync();
-                    //        }
-
-                    //    }
-                    //    stream.Dispose();
-                    //}
-                    using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                    using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
                         BidSaver.Serialize(fs, bidSearchResults[i]);
                     }
                 else
-                    using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                    using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
                         BiddingSaver.Serialize(fs, biddingSearchResults[i]);
                     }

@@ -20,21 +20,21 @@ namespace BackgroundTasks
         [JsonProperty(PropertyName = "contractorName")]
         public string ContractorName { get; set; }
 
-        [JsonProperty(PropertyName = "LogogURL")]
-        public string LogogURL { get; set; }
+        [JsonProperty(PropertyName = "contractorAvatarUrl")]
+        public string LogoURL { get; set; }
 
         [JsonProperty(PropertyName = "Id")]
         public int Id { get; set; }
 
         public Bid() { }
 
-        public Bid(string entityType, string title, string process, string contractorName, string logogURL, int id)
+        public Bid(string entityType, string title, string process, string contractorName, string logoURL, int id)
         {
             EntityType = entityType;
             Title = title;
             Process = process;
             ContractorName = contractorName;
-            LogogURL = logogURL;
+            LogoURL = logoURL;
             Id = id;
         }
 

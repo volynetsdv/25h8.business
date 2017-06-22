@@ -55,8 +55,8 @@
       <InProcessServer>
         <Path>CLRHost.dll</Path>
         <ActivatableClass ActivatableClassId="BackgroundTasks.Bid" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.Requests" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.RunClass" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
