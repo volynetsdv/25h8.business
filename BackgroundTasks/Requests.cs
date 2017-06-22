@@ -22,8 +22,8 @@ namespace BackgroundTasks
 
             try
             {
-                BID bid = new BID();
-                BIDDING bidding = new BIDDING();
+                Bid bid = new Bid();
+                Bidding bidding = new Bidding();
                 // Get inf from API
                 bid = await GetBIDAsync(feedUrl);
                 bidding = await GetBIDDINGAsync(feedUrl);
@@ -37,24 +37,24 @@ namespace BackgroundTasks
 
 
         //Request inf for BID
-        static async Task<BID> GetBIDAsync(string feedUrl)
+        static async Task<Bid> GetBIDAsync(string feedUrl)
         {
-            BID bid = null;
+            Bid bid = null;
             HttpResponseMessage response = await client.GetAsync(feedUrl);
             if (response.IsSuccessStatusCode)
             {
-                bid = await response.Content.ReadAsAsync<BID>();
+                bid = await response.Content.ReadAsAsync<Bid>();
             }
             return bid;
         }
         //Request inf for BIDDING
-        static async Task<BIDDING> GetBIDDINGAsync(string feedUrl)
+        static async Task<Bidding> GetBIDDINGAsync(string feedUrl)
         {
-            BIDDING bidding = null;
+            Bidding bidding = null;
             HttpResponseMessage response = await client.GetAsync(feedUrl);
             if (response.IsSuccessStatusCode)
             {
-                bidding = await response.Content.ReadAsAsync<BIDDING>();
+                bidding = await response.Content.ReadAsAsync<Bidding>();
             }
             return bidding;
         }

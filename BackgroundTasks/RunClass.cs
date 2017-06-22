@@ -42,6 +42,9 @@ namespace BackgroundTasks
             // Get a deferral, to prevent the task from closing prematurely
             // while asynchronous code is still running.
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder; //получаем текущую папку доступную для записи(локальная папка приложения)
+            StorageFile newFile = await localFolder.CreateFileAsync("title.xml", CreationCollisionOption.OpenIfExists); //создаем файл в єтой папке
+            
 
             // Download the feed.
             var jsonText = await GetFeed(); // получает значение от метода GetFeed и передает ниже в UpdateTile
@@ -80,9 +83,6 @@ namespace BackgroundTasks
                     else
                         return null;
                 }
-
-
-
             }
 
             catch (Exception ex)
@@ -100,6 +100,8 @@ namespace BackgroundTasks
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
         private void SaveData(string jsonText)
         {
+            //StorageFile openFile = await localFolder.GetFileAsync("title.xml");
+            //var stream = await newFile.OpenAsync(FileAccessMode.ReadWrite); //открываем файл для работы с ним
 
             //string jsonText = @" ЗДЕСЬ ДОЛЖЕН БЫТЬ JSON текст";
             JObject json = new JObject();
@@ -111,45 +113,61 @@ namespace BackgroundTasks
             // Получаем две коллекции объектов (BID и BIDDING).
             // В результате операции исключаем из списка "result" не нужны полня
             // Вопрос: не запихнет ли оно в один объект все что у нас есть?
-            IList<BID> bidSearchResults = new List<BID>();
+            IList<Bid> bidSearchResults = new List<Bid>();
             foreach (JToken res in result)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
-                BID searchResult = res.ToObject<BID>();
+                Bid searchResult = res.ToObject<Bid>();
                 bidSearchResults.Add(searchResult);
             }
 
 
-            IList<BIDDING> biddingSearchResults = new List<BIDDING>();
+            IList<Bidding> biddingSearchResults = new List<Bidding>();
             foreach (JToken res in result)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
-                BIDDING searchResult = res.ToObject<BIDDING>();
+                Bidding searchResult = res.ToObject<Bidding>();
                 biddingSearchResults.Add(searchResult);
             }
 
-                        // пример результата из Newtonsoft
-                        // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
-                        // Content = [1] In 2006, she released her debut album...
-                        // Url = http://en.wikipedia.org/wiki/Paris_Hilton
-
-                        // Title = <b>Paris Hilton</b>
-                        // Content = Self: Zoolander. Socialite <b>Paris Hilton</b>...
-                        // Url = http://www.imdb.com/name/nm0385296/
+            // пример результата из Newtonsoft
+            // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
+            // Content = [1] In 2006, she released her debut album...
+            // Url = http://en.wikipedia.org/wiki/Paris_Hilton
 
             //Проводим серриализацию объектов полученных объектов в XML и сохраняем в файл
-            XmlSerializer BidSaver = new XmlSerializer(typeof(BID));
-            XmlSerializer BiddingSaver = new XmlSerializer(typeof(BIDDING));
+
+            XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
+            XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
+            
+            var getLocalFolder = ApplicationData.Current.LocalFolder;
+            var path = Path.Combine(getLocalFolder.Path.ToString(), "title.xml");
 
             for (int i = 0; i < bidSearchResults.Count; i++)
             {
-                if (bidSearchResults[i].EntityType.Contains("bid"))   
-                    using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                if (bidSearchResults[i].EntityType.Contains("bid"))
+
+                    //{
+                    //    //по инструкции: Writing text to a file by using a stream (4 steps)
+                    //    //https://docs.microsoft.com/en-us/windows/uwp/files/quickstart-reading-and-writing-files
+                    //    using (var outputStream = stream.GetOutputStreamAt(0))
+                    //    {
+                    //        using (var dataWriter = new Windows.Storage.Streams.DataWriter(outputStream))
+                    //        {
+                    //            dataWriter.WriteString();
+                    //            await dataWriter.StoreAsync();
+                    //            await outputStream.FlushAsync();
+                    //        }
+
+                    //    }
+                    //    stream.Dispose();
+                    //}
+                    using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
                         BidSaver.Serialize(fs, bidSearchResults[i]);
                     }
                 else
-                    using (FileStream fs = new FileStream("title.xml", FileMode.Append)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                    using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
                     {
                         BiddingSaver.Serialize(fs, biddingSearchResults[i]);
                     }

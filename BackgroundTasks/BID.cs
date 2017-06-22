@@ -4,9 +4,10 @@ using System;
 namespace BackgroundTasks
 {
     [Serializable]
-    internal class BID 
-    { 
-      
+    public sealed class Bid 
+    {
+
+
         [JsonProperty(PropertyName = "entityType")]
         public string EntityType { get; set; }
 
@@ -24,7 +25,19 @@ namespace BackgroundTasks
 
         [JsonProperty(PropertyName = "Id")]
         public int Id { get; set; }
-        
+
+        public Bid() { }
+
+        public Bid(string entityType, string title, string process, string contractorName, string logogURL, int id)
+        {
+            EntityType = entityType;
+            Title = title;
+            Process = process;
+            ContractorName = contractorName;
+            LogogURL = logogURL;
+            Id = id;
+        }
+
 
     }
 }

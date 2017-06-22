@@ -26,7 +26,7 @@ namespace _25h8.business
         public MainPage()
         {
             this.InitializeComponent();
-            Application.Current.Exit(); //команда завершения работы приложенияю В теории фоновая задача 
+            //Application.Current.Exit(); //команда завершения работы приложенияю В теории фоновая задача 
                                         //должна проходить регистрацию (процес на столько быстр, что без брикпоинтов пользователь 
                                         //практически ничего не заметит) и после - завершаться. Тем не менее отдельный фоновый процесс после регистрации
                                         //будет оставаться активным. Так же есть более эффективная альтернатива: https://docs.microsoft.com/en-us/uwp/api/Windows.ApplicationModel.Core.CoreApplication#Windows_ApplicationModel_Core_CoreApplication_EnteredBackground 
@@ -59,6 +59,7 @@ namespace _25h8.business
                 taskBuilder.SetTrigger(new TimeTrigger(30, false));
                 var registration = taskBuilder.Register();
             }
+
         }
 
         private const string taskName = "RunClass";

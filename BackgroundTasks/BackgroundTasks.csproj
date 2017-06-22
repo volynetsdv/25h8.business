@@ -107,8 +107,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BID.cs" />
-    <Compile Include="BIDDING.cs" />
+    <Compile Include="Bid.cs" />
+    <Compile Include="Bidding.cs" />
     <Compile Include="Requests.cs" />
     <Compile Include="RunClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
