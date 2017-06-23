@@ -19,7 +19,7 @@
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
     <LayoutDir>I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\AppX</LayoutDir>
-    <RegisteredManifestChecksum>2611DD1B441FAD9869A6CBE688B7B35CD75C29E36C83A387CDCC7D59EEAC2374</RegisteredManifestChecksum>
+    <RegisteredManifestChecksum>96A7627C818D7DE1F9FE59CD3E8A8E3A46F68FDDB2AAB4638B03CA08B6565B46</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>25h8.business-dae263ea-dfa0-4927-906e-ebaecc1495c5_1.0.0.0_x86__gn0sy1b0645mr</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>25h8.business-dae263ea-dfa0-4927-906e-ebaecc1495c5_gn0sy1b0645mr!App</RegisteredUserModeAppID>
     <RegisteredPackageID>25h8.business-dae263ea-dfa0-4927-906e-ebaecc1495c5</RegisteredPackageID>
@@ -31,13 +31,13 @@
     <AppXManifest Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-06-22T19:50:09.458</Modified>
+      <Modified>2017-06-23T11:40:34.908</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\25h8.business.exe">
       <PackagePath>entrypoint\25h8.business.exe</PackagePath>
-      <Modified>2017-06-22T19:50:04.239</Modified>
+      <Modified>2017-06-23T11:40:31.211</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\volin\.nuget\packages\Json.NET.Web\1.0.49\lib\portable45-net45+win8+wpa81\Json.NET.Web.dll">
       <PackagePath>Json.NET.Web.dll</PackagePath>
@@ -545,7 +545,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\BackgroundTasks\bin\x86\Debug\BackgroundTasks.winmd">
       <PackagePath>BackgroundTasks.winmd</PackagePath>
-      <Modified>2017-06-22T19:49:57.814</Modified>
+      <Modified>2017-06-23T11:40:28.441</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\Assets\BadgeLogo.scale-100.png">
       <PackagePath>Assets\BadgeLogo.scale-100.png</PackagePath>
@@ -796,11 +796,11 @@
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-06-22T09:41:38.632</Modified>
+      <Modified>2017-06-23T10:07:53.700</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\Core\25h8.business.exe">
       <PackagePath>25h8.business.exe</PackagePath>
-      <Modified>2017-06-22T19:50:09.447</Modified>
+      <Modified>2017-06-23T11:40:34.896</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

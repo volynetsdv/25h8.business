@@ -22,11 +22,14 @@ using System.Security.Cryptography.X509Certificates;
 using Windows.Web.Http.Filters;
 using Windows.Security.Cryptography.Certificates;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace BackgroundTasks
 {
+
     public sealed class RunClass : IBackgroundTask
     {
+
 
         //сделано по образу и подобию из: https://docs.microsoft.com/ru-ru/windows/uwp/launch-resume/update-a-live-tile-from-a-background-task
 
@@ -105,13 +108,15 @@ namespace BackgroundTasks
         // Проводим дессериализацию и сохраняем результат в файл
         // Дессериализация выполняется по следующему примеру: 
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
+        
         private void SaveData(string jsonText)
         {
             JObject json = new JObject();
             json = JObject.Parse(jsonText);
+            Bid data = JsonConvert.DeserializeObject<Bid>(jsonText);
 
             // get JSON result objects into a list
-            IList<JToken> result = json["result"]["owner"].Children().ToList(); //[]
+            IList<JToken> result = json["result"].Children().ToList();
 
             // Получаем две коллекции объектов (BID и BIDDING).
             // В результате операции исключаем из списка "result" не нужны полня
@@ -143,21 +148,21 @@ namespace BackgroundTasks
             XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
             XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
             
-            var getLocalFolder = ApplicationData.Current.LocalFolder;
-            var path = Path.Combine(getLocalFolder.Path.ToString(), "title.xml");
-
             for (int i = 0; i < bidSearchResults.Count; i++)
             {
-                if (bidSearchResults[i].EntityType.Contains("bid"))
-                    using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
-                    {
-                        BidSaver.Serialize(fs, bidSearchResults[i]);
-                    }
-                else
-                    using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
-                    {
-                        BiddingSaver.Serialize(fs, biddingSearchResults[i]);
-                    }
+                if (bidSearchResults[i].Title != null)
+                {
+                    if (bidSearchResults[i].EntityType.Contains("bid"))
+                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                        {
+                            BidSaver.Serialize(fs, bidSearchResults[i]);
+                        }
+                    else
+                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                        {
+                            BiddingSaver.Serialize(fs, biddingSearchResults[i]);
+                        }
+                }
             }
 
         }
@@ -176,7 +181,7 @@ namespace BackgroundTasks
             //Для разных размеров плитки создадим  несколько таких строчек с "шаблонами тайлов":
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150Text03);
             //здесь должен быть цикл. [0] - это индекс элемента
-            tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText("title.xml");
+            tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText(path);
 
             // Create a new tile notification.
             if (tileXml != null)
@@ -196,6 +201,12 @@ namespace BackgroundTasks
         //static string customHeaderValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0";
 
         static string textElementName = "title";
+        static StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
+        static string path = Path.Combine(getLocalFolder.Path.ToString(), "title.xml"); //адрес файла в "title.xml" в системе
+
+    }
+    public sealed class Folder
+    {
 
 
     }
