@@ -23,6 +23,7 @@ using Windows.Web.Http.Filters;
 using Windows.Security.Cryptography.Certificates;
 using System.Text.RegularExpressions;
 using System.Collections;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BackgroundTasks
 {
@@ -48,19 +49,21 @@ namespace BackgroundTasks
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
             StorageFolder localFolder = ApplicationData.Current.LocalFolder; //получаем текущую папку доступную для записи(локальная папка приложения)
             StorageFile newFile = await localFolder.CreateFileAsync("title.xml", CreationCollisionOption.OpenIfExists); //создаем файл в єтой папке
-            
+
 
             // Download the feed.
             var jsonText = await GetFeed(); // получает значение от метода GetFeed и передает ниже в UpdateTile
 
             //save feed to XML or end the task
-            if (jsonText!=null)
-                SaveData(jsonText);
+            if (jsonText != null)
+                LoadBidJson(jsonText);
+                //SaveData(jsonText);
             else
                 deferral.Complete();
-
+            
+            //Save();
             // Update the live tile with the feed items.
-            UpdateTile();
+            TitleUpdater.UpdateTile();
 
             // Inform the system that the task is finished.
             deferral.Complete();
@@ -105,22 +108,14 @@ namespace BackgroundTasks
         }
 
 
-        // Проводим дессериализацию и сохраняем результат в файл
-        // Дессериализация выполняется по следующему примеру: 
-        //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
-        
-        private void SaveData(string jsonText)
+        private static IList<Bidding> LoadBidJson(string jsonText)
         {
-            JObject json = new JObject();
-            json = JObject.Parse(jsonText);
-            Bid data = JsonConvert.DeserializeObject<Bid>(jsonText);
+            var json = JObject.Parse(jsonText);
 
             // get JSON result objects into a list
-            IList<JToken> result = json["result"].Children().ToList();
+            List<JToken> result = json["result"].Children().ToList();
 
             // Получаем две коллекции объектов (BID и BIDDING).
-            // В результате операции исключаем из списка "result" не нужны полня
-            // Вопрос: не запихнет ли оно в один объект все что у нас есть?
             IList<Bid> bidSearchResults = new List<Bid>();
             foreach (JToken res in result)
             {
@@ -129,78 +124,63 @@ namespace BackgroundTasks
                 bidSearchResults.Add(searchResult);
             }
 
-
-            IList<Bidding> biddingSearchResults = new List<Bidding>();
+            List<Bidding> biddingSearchResults = new List<Bidding>();
             foreach (JToken res in result)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
                 Bidding searchResult = res.ToObject<Bidding>();
                 biddingSearchResults.Add(searchResult);
             }
-
-            // пример результата из Newtonsoft
-            // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
-            // Content = [1] In 2006, she released her debut album...
-            // Url = http://en.wikipedia.org/wiki/Paris_Hilton
-
-            //Проводим серриализацию полученных объектов в XML и сохраняем в файл
-
-            XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
-            XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
-            
-            for (int i = 0; i < bidSearchResults.Count; i++)
-            {
-                if (bidSearchResults[i].Title != null)
-                {
-                    if (bidSearchResults[i].EntityType.Contains("bid"))
-                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
-                        {
-                            BidSaver.Serialize(fs, bidSearchResults[i]);
-                        }
-                    else
-                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
-                        {
-                            BiddingSaver.Serialize(fs, biddingSearchResults[i]);
-                        }
-                }
-            }
-
+            return biddingSearchResults;
         }
+        // Проводим дессериализацию и сохраняем результат в файл
+        // Дессериализация выполняется по следующему примеру: 
+        //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
+
+        //private void Save() //должен получить объекты
+        //{
+
+
+        //    // пример результата из Newtonsoft
+        //    // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
+        //    // Content = [1] In 2006, she released her debut album...
+        //    // Url = http://en.wikipedia.org/wiki/Paris_Hilton
+
+        //    //Проводим серриализацию полученных объектов в XML и сохраняем в файл
+
+        //    XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
+        //    XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
+            
+        //    for (int i = 0; i < bidSearchResults.Count; i++)
+        //    {
+        //        if (bidSearchResults[i].Title != null)
+        //        {
+        //            if (bidSearchResults[i].EntityType.Contains("bid"))
+        //                using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+        //                {
+        //                    BidSaver.Serialize(fs, bidSearchResults[i]);
+        //                }
+        //            else
+        //                using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+        //                {
+        //                    BiddingSaver.Serialize(fs, biddingSearchResults[i]);
+        //                }
+        //        }
+        //    }
+
+        //}
 
         //В метод нужно добавить перебор тайтлов,но для начала 
         //хочу добиться вывода на плитку хотя бы первого значения. Дальше все будет 
         //с реализацией сильно поможет статья для Вин8: https://habrahabr.ru/post/149219/
-        private static void UpdateTile()           
-        {
-            // Create a tile update manager for the specified syndication feed.
-            var updater = TileUpdateManager.CreateTileUpdaterForApplication();
-            updater.EnableNotificationQueue(true);
-            updater.Clear();
 
-            // Create a tile notification 
-            //Для разных размеров плитки создадим  несколько таких строчек с "шаблонами тайлов":
-            XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150Text03);
-            //здесь должен быть цикл. [0] - это индекс элемента
-            tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText(path);
-
-            // Create a new tile notification.
-            if (tileXml != null)
-            {
-            updater.Update(new TileNotification(tileXml));
-            }
-            else
-               Debug.WriteLine(":((("); ;
-            // Don't create more than 5 notifications.
-            //if (itemCount++ > 10) break;
-
-        }
 
         // Although most HTTP servers do not require User-Agent header, others will reject the request or return
         // a different response if this header is missing. Use SetRequestHeader() to add custom headers.
         //static string customHeaderName = "User-Agent";
         //static string customHeaderValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0";
 
-        static string textElementName = "title";
+
         static StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
         static string path = Path.Combine(getLocalFolder.Path.ToString(), "title.xml"); //адрес файла в "title.xml" в системе
 

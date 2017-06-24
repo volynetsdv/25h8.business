@@ -237,3 +237,6 @@ I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\FxResou
 I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\FxResources.System.ComponentModel.TypeConverter.SR.resw
 I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\FxResources.System.Runtime.InteropServices.RuntimeInformation.SR.resw
 I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\FxResources.System.Runtime.Serialization.Formatters.SR.resw
+I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework\en\Microsoft.VisualStudio.TestTools.UnitTesting.Resources.FrameworkMessages.resw
+I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\resources.en.resfiles
+I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\obj\x86\Debug\resources.en.resfiles.intermediate
