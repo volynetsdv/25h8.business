@@ -31,13 +31,13 @@
     <AppXManifest Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-06-25T15:02:34.597</Modified>
+      <Modified>2017-06-25T16:47:56.930</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\25h8.business.exe">
       <PackagePath>entrypoint\25h8.business.exe</PackagePath>
-      <Modified>2017-06-25T15:02:30.526</Modified>
+      <Modified>2017-06-25T16:47:53.223</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\volin\.nuget\packages\Json.NET.Web\1.0.49\lib\portable45-net45+win8+wpa81\Json.NET.Web.dll">
       <PackagePath>Json.NET.Web.dll</PackagePath>
@@ -549,7 +549,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\BackgroundTasks\bin\x86\Debug\BackgroundTasks.winmd">
       <PackagePath>BackgroundTasks.winmd</PackagePath>
-      <Modified>2017-06-25T15:02:25.246</Modified>
+      <Modified>2017-06-25T16:47:50.416</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\Assets\BadgeLogo.scale-100.png">
       <PackagePath>Assets\BadgeLogo.scale-100.png</PackagePath>
@@ -804,7 +804,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="I:\IT\C# Projects\UWP_projects\25h8.business\25h8.business\bin\x86\Debug\Core\25h8.business.exe">
       <PackagePath>25h8.business.exe</PackagePath>
-      <Modified>2017-06-25T15:02:34.585</Modified>
+      <Modified>2017-06-25T16:47:56.926</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

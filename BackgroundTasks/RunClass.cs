@@ -113,22 +113,37 @@ namespace BackgroundTasks
             var json = JObject.Parse(jsonText);
 
             // get JSON result objects into a list
-            var result = json["result"].Children().ToList(); 
+            var resultList = json["result"].Children().ToList();
+            var xList = resultList.ToString();
+            //var ownJson = JObject.Parse(resultList);
+            //var ownList = ownJson["owner"].Children().ToList();
+
 
             // Получаем две коллекции объектов (BID и BIDDING).
-            IList<Bid> bidSearchResults = new List<Bid>();
-            IList<BidOwner> ownerSearchResults = new List<BidOwner>();
-            foreach (var res in result)
+            IList<Bid> ownerSearchResults = new List<Bid>();
+            List<Bidding> biddingSearchResults = new List<Bidding>();
+            foreach (var res in resultList)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
-                Bid searchResult = res.ToObject<Bid>();
-                BidOwner searchBidOwner = res.ToObject<BidOwner>();
-                bidSearchResults.Add(searchResult);
-                ownerSearchResults.Add(searchBidOwner);
-            }
 
-            List<Bidding> biddingSearchResults = new List<Bidding>();
-            foreach (JToken res in result)
+                var searchBidOwner = res.ToString();//res.ToObject<BidOwner>();
+                //string searchBidOwnerString = searchBidOwner.ToString();
+                var json1 = JObject.Parse(searchBidOwner);
+                var ownerList = json1["owner"].ToList();
+                foreach (var own in ownerList)
+                {
+                    try
+                    {
+                        Bid ownSearchResult = own.ToObject<Bid>();
+                        ownerSearchResults.Add(ownSearchResult);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+            }
+            foreach (var res in resultList)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
                 Bidding searchResult = res.ToObject<Bidding>();

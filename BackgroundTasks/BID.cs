@@ -47,49 +47,20 @@ namespace BackgroundTasks
     [Serializable]
     public sealed class Bid
     {
-        [JsonProperty(PropertyName = "entityType")]
-        public string EntityType { get; set; }
-
-        [JsonProperty(PropertyName = "title")]
-        public string Title { get; set; }
-
-        [JsonProperty(PropertyName = "proc")]
-        public string Process { get; set; }
-
-        [JsonProperty(PropertyName = "Id")]
-        public int Id { get; set; }
-
-
-
-        public Bid() { }
-
-        public Bid(string entityType, string title, string process, int id)
-        {
-            EntityType = entityType;
-            Title = title;
-            Process = process;
-            Id = id;
-           
-        }
-    }
-    [Serializable]
-    public sealed class BidOwner
-    {
-        [JsonProperty(PropertyName = "owner")]
-        public object Owner { get; set; }
-
         [JsonProperty(PropertyName = "contractorName")]
         public string ContractorName { get; set; }
 
         [JsonProperty(PropertyName = "contractorAvatarUrl")]
-        public string LogoUrl { get; set; }
+        public string LogoURL { get; set; }
 
-        public BidOwner() { }
+        public Bid() { }
 
-        public BidOwner(string contractorName, string logoUrl)
+        public Bid(string contractorName, string logoURL)
         {
             ContractorName = contractorName;
-            LogoUrl = logoUrl;
+            LogoURL = logoURL;
+
         }
     }
+    
 }
