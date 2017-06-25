@@ -115,39 +115,28 @@ namespace BackgroundTasks
             // get JSON result objects into a list
             var resultList = json["result"].Children().ToList();
             var xList = resultList.ToString();
-            //var ownJson = JObject.Parse(resultList);
-            //var ownList = ownJson["owner"].Children().ToList();
 
-
-            // Получаем две коллекции объектов (BID и BIDDING).
-            IList<Bid> ownerSearchResults = new List<Bid>();
             List<Bidding> biddingSearchResults = new List<Bidding>();
-            foreach (var res in resultList)
-            {
-                // JToken.ToObject is a helper method that uses JsonSerializer internally
 
-                var searchBidOwner = res.ToString();//res.ToObject<BidOwner>();
-                //string searchBidOwnerString = searchBidOwner.ToString();
-                var json1 = JObject.Parse(searchBidOwner);
-                var ownerList = json1["owner"].ToList();
-                foreach (var own in ownerList)
-                {
-                    try
-                    {
-                        Bid ownSearchResult = own.ToObject<Bid>();
-                        ownerSearchResults.Add(ownSearchResult);
-                    }
-                    catch (Exception)
-                    {
-                        continue;
-                    }
-                }
-            }
+            
             foreach (var res in resultList)
             {
-                // JToken.ToObject is a helper method that uses JsonSerializer internally
-                Bidding searchResult = res.ToObject<Bidding>();
-                biddingSearchResults.Add(searchResult);
+                try
+                {
+                    var searchBidOwner = res.ToString();
+                    var json1 = JObject.Parse(searchBidOwner);
+                    var ownerList = json1["owner"].ToObject<Bidding>();
+                    // JToken.ToObject is a helper method that uses JsonSerializer internally
+                    Bidding searchResult = res.ToObject<Bidding>();
+                    searchResult.ContractorName = ownerList.ContractorName;
+                    searchResult.LogoURL = ownerList.LogoURL;
+                    biddingSearchResults.Add(searchResult);
+                }
+                catch (Exception)
+                {
+                    //не знаю как обработать. на 3-й итерации приходит пустой Path в строку 128
+                }
+
             }
             return biddingSearchResults;
         }
