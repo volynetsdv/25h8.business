@@ -113,15 +113,18 @@ namespace BackgroundTasks
             var json = JObject.Parse(jsonText);
 
             // get JSON result objects into a list
-            List<JToken> result = json["result"].Children().ToList();
+            var result = json["result"].Children().ToList(); 
 
             // Получаем две коллекции объектов (BID и BIDDING).
             IList<Bid> bidSearchResults = new List<Bid>();
-            foreach (JToken res in result)
+            IList<BidOwner> ownerSearchResults = new List<BidOwner>();
+            foreach (var res in result)
             {
                 // JToken.ToObject is a helper method that uses JsonSerializer internally
                 Bid searchResult = res.ToObject<Bid>();
+                BidOwner searchBidOwner = res.ToObject<BidOwner>();
                 bidSearchResults.Add(searchResult);
+                ownerSearchResults.Add(searchBidOwner);
             }
 
             List<Bidding> biddingSearchResults = new List<Bidding>();

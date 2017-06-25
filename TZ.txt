@@ -22,3 +22,9 @@ List<Bidding>
 при этом TestJsonMethod должен вызвать LoadBidJson
 получить результат и проверить все ок- все ли данные загрузились
 можно сделать public что бы не так сильно долбаться в TestJsonMethod с его вызовом
+
+
+
+{{"entityType": "bidding",
+  "owner": {"contractorName": "Фьюри Ник Фф",}
+}}

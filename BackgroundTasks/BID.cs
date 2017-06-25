@@ -59,23 +59,25 @@ namespace BackgroundTasks
         [JsonProperty(PropertyName = "Id")]
         public int Id { get; set; }
 
-        [JsonProperty(PropertyName = "owner")]
-        public object Owner { get; set; }
+
 
         public Bid() { }
 
-        public Bid(string entityType, string title, string process, int id, object owner)
+        public Bid(string entityType, string title, string process, int id)
         {
             EntityType = entityType;
             Title = title;
             Process = process;
             Id = id;
-            Owner = owner;
+           
         }
     }
     [Serializable]
     public sealed class BidOwner
     {
+        [JsonProperty(PropertyName = "owner")]
+        public object Owner { get; set; }
+
         [JsonProperty(PropertyName = "contractorName")]
         public string ContractorName { get; set; }
 
