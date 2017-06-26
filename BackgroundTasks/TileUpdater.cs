@@ -11,8 +11,8 @@ namespace BackgroundTasks
     public sealed class TileUpdater
     {
         static string textElementName = "title";
-        static StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
-        static string path = Path.Combine(getLocalFolder.Path.ToString(), "title.xml"); //адрес файла в "title.xml" в системе
+        static StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
+        static string PathFolder = Path.Combine(GetLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
 
         public static void UpdateTile()
         {
@@ -25,7 +25,7 @@ namespace BackgroundTasks
             //Для разных размеров плитки создадим  несколько таких строчек с "шаблонами тайлов":
             XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150Text03);
             //здесь должен быть цикл. [0] - это индекс элемента
-            tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText(path);
+            tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText(PathFolder);
 
             // Create a new tile notification.
             if (tileXml != null)

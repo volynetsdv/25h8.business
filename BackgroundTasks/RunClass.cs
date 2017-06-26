@@ -140,7 +140,7 @@ namespace BackgroundTasks
         {
             var willSaveThisResult = biddingSearchResults;
 
-            File.Delete(path);
+            File.Delete(PathFolder);
             //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
             var bidSaver = new XmlSerializer(typeof(Bid));
@@ -151,12 +151,12 @@ namespace BackgroundTasks
                 if (willSaveThisResult[i].Title != null)
                 {
                     if (willSaveThisResult[i].EntityType.Equals("bid"))
-                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
+                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
                         {
                             bidSaver.Serialize(fs, willSaveThisResult[i]);
                         }
                     else
-                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
+                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
                         {
                             biddingSaver.Serialize(fs, willSaveThisResult[i]);
                         }
@@ -166,8 +166,8 @@ namespace BackgroundTasks
         }
 
  
-        static readonly StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
-        static readonly string path = Path.Combine(getLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
+        static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
+        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
 
     }
 }
