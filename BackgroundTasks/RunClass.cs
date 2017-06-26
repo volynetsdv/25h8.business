@@ -30,16 +30,9 @@ namespace BackgroundTasks
 
     public sealed class RunClass : IBackgroundTask
     {
+        //использован следующий пример: https://docs.microsoft.com/ru-ru/windows/uwp/launch-resume/update-a-live-tile-from-a-background-task
 
-
-        //сделано по образу и подобию из: https://docs.microsoft.com/ru-ru/windows/uwp/launch-resume/update-a-live-tile-from-a-background-task
-
-
-            //мой Get не захватывает новую ссылку на API: 
-            static string feedUrl = @"https://stage.bankfund.sale/api/search?index=trade&limit=10&offset=0&populate=owner&project=MAIN";
-
-
-        //static string feedUrl = @"https://bankfund.sale/api/bidding?landing=true&limit=10&project=FG&state=in__completed,canceled,refused&way=auction";
+        static string feedUrl = @"https://stage.bankfund.sale/api/search?index=trade&limit=10&offset=0&populate=owner&project=MAIN";
         
         //здесь начинается выполнение фоновой задачи
         public async void Run(IBackgroundTaskInstance taskInstance)
@@ -47,14 +40,11 @@ namespace BackgroundTasks
             // Get a deferral, to prevent the task from closing prematurely
             // while asynchronous code is still running.
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder; //получаем текущую папку доступную для записи(локальная папка приложения)
-            StorageFile newFile = await localFolder.CreateFileAsync("title.xml", CreationCollisionOption.OpenIfExists); //создаем файл в єтой папке
-
 
             // Download the feed.
             var jsonText = await GetFeed(); // получает значение от метода GetFeed и передает ниже в UpdateTile
 
-            //save feed to XML or end the task
+            //save feed to XML
             if (jsonText != null)
             {
                 var biddingSearchResults = new List<Bidding>();
@@ -62,10 +52,7 @@ namespace BackgroundTasks
 
                 Save(biddingSearchResults);
             }
-            //SaveData(jsonText);
-
-
-            //Save();
+            
             // Update the live tile with the feed items.
             TitleUpdater.UpdateTile();
 
@@ -73,6 +60,7 @@ namespace BackgroundTasks
             deferral.Complete();
 
         }
+
         //получаем ответ от JSON в виде строки
         //вынуждены использовать HttpBaseProtocolFilter для получения данных от не защищенного АПИ (отсувствует сертификат SSL)
         private static async Task<string> GetFeed()
@@ -110,26 +98,27 @@ namespace BackgroundTasks
             }
 
         }
-
-
+        
+        // Проводим дессериализацию
+        // Дессериализация выполняется по следующему примеру: 
+        //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
         private static List<Bidding> LoadBidJson(string jsonText)
         {
             var json = JObject.Parse(jsonText);
-
             // собираем JSON resultList objects в список объектов
             var resultList = json["result"].Children().ToList();
-            //результат работы цикла:
-            var biddingSearchResults = new List<Bidding>();
-           
+            
+            var biddingSearchResults = new List<Bidding>();//результат работы цикла
+
             foreach (var res in resultList)
             {
                 try
                 {
                     var searchBidOwner = res.ToString();
                     var json1 = JObject.Parse(searchBidOwner);
-                    var ownerList = json1["owner"].ToObject<Bidding>();
+                    var ownerList = json1["owner"].ToObject<Bidding>(); //практически такой же как resultList, но уже готовый к приведению к объекту
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
-                    Bidding searchResult = res.ToObject<Bidding>();
+                    var searchResult = res.ToObject<Bidding>();
                     searchResult.ContractorName = ownerList.ContractorName;
                     searchResult.LogoURL = ownerList.LogoURL;
                     biddingSearchResults.Add(searchResult);
@@ -145,37 +134,30 @@ namespace BackgroundTasks
             }
             return biddingSearchResults;
         }
-        // Проводим дессериализацию и сохраняем результат в файл
-        // Дессериализация выполняется по следующему примеру: 
-        //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
 
-        private void Save(List<Bidding> biddingSearchResults) //должен получить объекты
+        // Cохраняем результат в файл
+        private void Save(List<Bidding> biddingSearchResults) 
         {
             var willSaveThisResult = biddingSearchResults;
 
-            // пример результата из Newtonsoft
-            // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
-            // Content = [1] In 2006, she released her debut album...
-            // Url = http://en.wikipedia.org/wiki/Paris_Hilton
-
             //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
-            XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
-            XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
+            XmlSerializer bidSaver = new XmlSerializer(typeof(Bid));
+            XmlSerializer biddingSaver = new XmlSerializer(typeof(Bidding));
 
             for (int i = 0; i < willSaveThisResult.Count; i++)
             {
                 if (willSaveThisResult[i].Title != null)
                 {
-                    if (willSaveThisResult[i].EntityType.Contains("bid"))
-                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                    if (willSaveThisResult[i].EntityType.Equals("bid"))
+                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
                         {
-                            BidSaver.Serialize(fs, willSaveThisResult[i]);
+                            bidSaver.Serialize(fs, willSaveThisResult[i]);
                         }
                     else
-                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
                         {
-                            BiddingSaver.Serialize(fs, biddingSearchResults[i]);
+                            biddingSaver.Serialize(fs, willSaveThisResult[i]);
                         }
                 }
             }
@@ -194,12 +176,7 @@ namespace BackgroundTasks
 
 
         static StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
-        static string path = Path.Combine(getLocalFolder.Path.ToString(), "title.xml"); //адрес файла в "title.xml" в системе
-
-    }
-    public sealed class Folder
-    {
-
+        static string path = Path.Combine(getLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
 
     }
 }

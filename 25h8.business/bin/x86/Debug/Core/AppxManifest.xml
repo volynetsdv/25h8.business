@@ -57,10 +57,9 @@
       <InProcessServer>
         <Path>25h8.business.exe</Path>
         <ActivatableClass ActivatableClassId="BackgroundTasks.Bid" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.TitleUpdater" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.RunClass" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.TitleUpdater" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.Folder" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
   </Extensions>
