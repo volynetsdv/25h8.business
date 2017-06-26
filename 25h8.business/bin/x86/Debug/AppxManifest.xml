@@ -54,12 +54,11 @@
     <Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
         <Path>CLRHost.dll</Path>
-        <ActivatableClass ActivatableClassId="BackgroundTasks.Folder" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.RunClass" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.TitleUpdater" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.BidOwner" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.Bid" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.RunClass" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.TitleUpdater" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.Folder" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
   </Extensions>

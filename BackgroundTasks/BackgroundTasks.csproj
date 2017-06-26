@@ -109,8 +109,6 @@
   <ItemGroup>
     <Compile Include="Bid.cs" />
     <Compile Include="Bidding.cs" />
-    <Compile Include="BidOwner.cs" />
-    <Compile Include="JsonClass.cs" />
     <Compile Include="RunClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TitleUpdater.cs" />

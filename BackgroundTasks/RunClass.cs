@@ -56,11 +56,15 @@ namespace BackgroundTasks
 
             //save feed to XML or end the task
             if (jsonText != null)
-                LoadBidJson(jsonText);
-                //SaveData(jsonText);
-            else
-                deferral.Complete();
-            
+            {
+                var biddingSearchResults = new List<Bidding>();
+                biddingSearchResults = LoadBidJson(jsonText);
+
+                Save(biddingSearchResults);
+            }
+            //SaveData(jsonText);
+
+
             //Save();
             // Update the live tile with the feed items.
             TitleUpdater.UpdateTile();
@@ -108,17 +112,15 @@ namespace BackgroundTasks
         }
 
 
-        private static IList<Bidding> LoadBidJson(string jsonText)
+        private static List<Bidding> LoadBidJson(string jsonText)
         {
             var json = JObject.Parse(jsonText);
 
-            // get JSON result objects into a list
+            // собираем JSON resultList objects в список объектов
             var resultList = json["result"].Children().ToList();
-            var xList = resultList.ToString();
-
-            List<Bidding> biddingSearchResults = new List<Bidding>();
-
-            
+            //результат работы цикла:
+            var biddingSearchResults = new List<Bidding>();
+           
             foreach (var res in resultList)
             {
                 try
@@ -132,9 +134,12 @@ namespace BackgroundTasks
                     searchResult.LogoURL = ownerList.LogoURL;
                     biddingSearchResults.Add(searchResult);
                 }
-                catch (Exception)
+                catch (Exception) //на 3-й итерации цикла приходит пустой "owner", что вызывает ошибку
                 {
-                    //не знаю как обработать. на 3-й итерации приходит пустой Path в строку 128
+                    var searchResult = res.ToObject<Bidding>();
+                    searchResult.ContractorName = "Продавец не указан";
+                    //searchResult.LogoURL = "";
+                    biddingSearchResults.Add(searchResult);
                 }
 
             }
@@ -144,38 +149,38 @@ namespace BackgroundTasks
         // Дессериализация выполняется по следующему примеру: 
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
 
-        //private void Save() //должен получить объекты
-        //{
+        private void Save(List<Bidding> biddingSearchResults) //должен получить объекты
+        {
+            var willSaveThisResult = biddingSearchResults;
 
+            // пример результата из Newtonsoft
+            // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
+            // Content = [1] In 2006, she released her debut album...
+            // Url = http://en.wikipedia.org/wiki/Paris_Hilton
 
-        //    // пример результата из Newtonsoft
-        //    // Title = <b>Paris Hilton</b> - Wikipedia, the free encyclopedia
-        //    // Content = [1] In 2006, she released her debut album...
-        //    // Url = http://en.wikipedia.org/wiki/Paris_Hilton
+            //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
-        //    //Проводим серриализацию полученных объектов в XML и сохраняем в файл
+            XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
+            XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
 
-        //    XmlSerializer BidSaver = new XmlSerializer(typeof(Bid));
-        //    XmlSerializer BiddingSaver = new XmlSerializer(typeof(Bidding));
-            
-        //    for (int i = 0; i < bidSearchResults.Count; i++)
-        //    {
-        //        if (bidSearchResults[i].Title != null)
-        //        {
-        //            if (bidSearchResults[i].EntityType.Contains("bid"))
-        //                using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
-        //                {
-        //                    BidSaver.Serialize(fs, bidSearchResults[i]);
-        //                }
-        //            else
-        //                using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
-        //                {
-        //                    BiddingSaver.Serialize(fs, biddingSearchResults[i]);
-        //                }
-        //        }
-        //    }
+            for (int i = 0; i < willSaveThisResult.Count; i++)
+            {
+                if (willSaveThisResult[i].Title != null)
+                {
+                    if (willSaveThisResult[i].EntityType.Contains("bid"))
+                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                        {
+                            BidSaver.Serialize(fs, willSaveThisResult[i]);
+                        }
+                    else
+                        using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write)) //заменил OpenOrCreate на Append. Оставить если нет проблем с доступом к файлу
+                        {
+                            BiddingSaver.Serialize(fs, biddingSearchResults[i]);
+                        }
+                }
+            }
 
-        //}
+        }
 
         //В метод нужно добавить перебор тайтлов,но для начала 
         //хочу добиться вывода на плитку хотя бы первого значения. Дальше все будет 
