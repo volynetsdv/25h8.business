@@ -112,7 +112,7 @@
     <Compile Include="Owner.cs" />
     <Compile Include="RunClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TitleUpdater.cs" />
+    <Compile Include="TileUpdater.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Json.NET.Web">

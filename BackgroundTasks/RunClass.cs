@@ -54,7 +54,7 @@ namespace BackgroundTasks
             }
             
             // Update the live tile with the feed items.
-            TitleUpdater.UpdateTile();
+            TileUpdater.UpdateTile();
 
             // Inform the system that the task is finished.
             deferral.Complete();
@@ -140,10 +140,11 @@ namespace BackgroundTasks
         {
             var willSaveThisResult = biddingSearchResults;
 
+            File.Delete(path);
             //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
-            XmlSerializer bidSaver = new XmlSerializer(typeof(Bid));
-            XmlSerializer biddingSaver = new XmlSerializer(typeof(Bidding));
+            var bidSaver = new XmlSerializer(typeof(Bid));
+            var biddingSaver = new XmlSerializer(typeof(Bidding));
 
             for (int i = 0; i < willSaveThisResult.Count; i++)
             {
@@ -164,17 +165,7 @@ namespace BackgroundTasks
 
         }
 
-        //В метод нужно добавить перебор тайтлов,но для начала 
-        //хочу добиться вывода на плитку хотя бы первого значения. Дальше все будет 
-        //с реализацией сильно поможет статья для Вин8: https://habrahabr.ru/post/149219/
-
-
-        // Although most HTTP servers do not require User-Agent header, others will reject the request or return
-        // a different response if this header is missing. Use SetRequestHeader() to add custom headers.
-        //static string customHeaderName = "User-Agent";
-        //static string customHeaderValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0";
-
-
+ 
         static readonly StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
         static readonly string path = Path.Combine(getLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
 
