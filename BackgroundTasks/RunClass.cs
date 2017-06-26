@@ -116,7 +116,7 @@ namespace BackgroundTasks
                 {
                     var searchBidOwner = res.ToString();
                     var json1 = JObject.Parse(searchBidOwner);
-                    var ownerList = json1["owner"].ToObject<Bidding>(); //практически такой же как resultList, но уже готовый к приведению к объекту
+                    var ownerList = json1["owner"].ToObject<Owner>(); //практически такой же как resultList, но уже готовый к приведению к объекту
                     // JToken.ToObject is a helper method that uses JsonSerializer internally
                     var searchResult = res.ToObject<Bidding>();
                     searchResult.ContractorName = ownerList.ContractorName;
@@ -175,8 +175,8 @@ namespace BackgroundTasks
         //static string customHeaderValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0";
 
 
-        static StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
-        static string path = Path.Combine(getLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
+        static readonly StorageFolder getLocalFolder = ApplicationData.Current.LocalFolder;
+        static readonly string path = Path.Combine(getLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
 
     }
 }
