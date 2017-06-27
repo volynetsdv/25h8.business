@@ -42,20 +42,13 @@ namespace BackgroundTasks
             // while asynchronous code is still running.
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
 
-            // Download the feed.
-            var jsonText = await GetFeed(); // получает значение от метода GetFeed и передает ниже в UpdateTile
+            // Download the and save JSON to file.
+            await GetJson(); 
 
-            //save feed to XML
-            if (jsonText != null)
-            {
-                var biddingSearchResults = new List<Bidding>();
-                biddingSearchResults = LoadBidJson(jsonText);
-
-                Save(biddingSearchResults);
-            }
-            
+            var biddingSearchResults = LoadBidJson();
+                        
             // Update the live tile with the feed items.
-            TileUpdater.UpdateTile();
+            TileUpdater.UpdateTile(biddingSearchResults);
 
             // Inform the system that the task is finished.
             deferral.Complete();
@@ -64,7 +57,7 @@ namespace BackgroundTasks
 
         //получаем ответ от JSON в виде строки
         //вынуждены использовать HttpBaseProtocolFilter для получения данных от не защищенного АПИ (отсувствует сертификат SSL)
-        private static async Task<string> GetFeed()
+        private static async Task GetJson()
         {
             try
             {
@@ -79,25 +72,30 @@ namespace BackgroundTasks
                 {
                     HttpResponseMessage response = await httpClient.GetAsync(new Uri(feedUrl));
 
-                    string httpSerialize = await response.Content.ReadAsStringAsync();
-                    string parsedString = Regex.Unescape(httpSerialize);
+                    var httpSerialize = await response.Content.ReadAsStringAsync();
+                    var parsedString = Regex.Unescape(httpSerialize);
                     byte[] isoBites = Encoding.GetEncoding("ISO-8859-1").GetBytes(parsedString);
-                    string jsonText = Encoding.UTF8.GetString(isoBites, 0, isoBites.Length);
-                    
+                    var jsonText = Encoding.UTF8.GetString(isoBites, 0, isoBites.Length);
                     if (jsonText != null)
+                    {
+                        try
+                        {
+                            File.Delete(PathFolder);
+                        }
+                        catch
+                        {
+                            int timeout = 5000;
+                            Task task = Task.Run(() => File.Delete(PathFolder));
+                            task.Wait(timeout);
+                        }
                         File.WriteAllText(PathFolder, jsonText);
-                    return jsonText;
-                   
-                    else
-                        return null;
+                    }
                 }
             }
 
             catch (Exception ex)
-            {
-                
+            {                
                 Debug.WriteLine(ex.ToString());
-                return "";
             }
 
         }
@@ -105,8 +103,9 @@ namespace BackgroundTasks
         // Проводим дессериализацию
         // Дессериализация выполняется по следующему примеру: 
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
-        private static List<Bidding> LoadBidJson(string jsonText)
+        private static IList<Bidding> LoadBidJson()
         {
+            var jsonText = File.ReadAllText(PathFolder);
             var json = JObject.Parse(jsonText);
             // собираем JSON resultList objects в список объектов
             var resultList = json["result"].Children().ToList();
@@ -131,37 +130,37 @@ namespace BackgroundTasks
         }
 
         // Проводим серриализацию в XML и сохраняем результат в файл
-        private void Save(List<Bidding> biddingSearchResults) 
-        {
-            File.Delete(PathFolder);
-            //Проводим серриализацию полученных объектов в XML и сохраняем в файл
+        //private void Save(List<Bidding> biddingSearchResults) 
+        //{
+        //    File.Delete(PathFolder);
+        //    //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
-            var bidSaver = new XmlSerializer(typeof(Bid));
-            var biddingSaver = new XmlSerializer(typeof(Bidding));
+        //    var bidSaver = new XmlSerializer(typeof(Bid));
+        //    var biddingSaver = new XmlSerializer(typeof(Bidding));
 
-            for (int i = 0; i < biddingSearchResults.Count; i++)
-            {
-                if (biddingSearchResults[i].Title != null)
-                {
-                    if (biddingSearchResults[i].EntityType.Equals("Заявка"))
-                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
-                        {
+        //    for (int i = 0; i < biddingSearchResults.Count; i++)
+        //    {
+        //        if (biddingSearchResults[i].Title != null)
+        //        {
+        //            if (biddingSearchResults[i].EntityType.Equals("Заявка"))
+        //                using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
+        //                {
 
-                            bidSaver.Serialize(fs, biddingSearchResults[i]);
-                        }
-                    else
-                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
-                        {
-                            biddingSaver.Serialize(fs, biddingSearchResults[i]);
-                        }
-                }
-            }
+        //                    bidSaver.Serialize(fs, biddingSearchResults[i]);
+        //                }
+        //            else
+        //                using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
+        //                {
+        //                    biddingSaver.Serialize(fs, biddingSearchResults[i]);
+        //                }
+        //        }
+        //    }
 
-        }
+        //}
 
  
         static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
-        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.xml"); //адрес файла в "title.xml" в системе
+        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.json"); //адрес файла в "title.xml" в системе
 
     }
 }

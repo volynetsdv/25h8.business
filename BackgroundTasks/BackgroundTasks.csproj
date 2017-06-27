@@ -113,8 +113,6 @@
     <Compile Include="RunClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileUpdater.cs" />
-    <Compile Include="Models\XmlDeserializer .cs" />
-    <Compile Include="Models\XmlOwner.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Json.NET.Web">

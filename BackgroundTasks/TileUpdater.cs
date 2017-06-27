@@ -1,5 +1,4 @@
 ﻿using System;
-using BackgroundTasks.Models;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System.Diagnostics;
 using System.IO;
@@ -17,23 +16,10 @@ namespace BackgroundTasks
         static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
         static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.xml"); //адрес файла в "title.xml" в системе
 
-        public static void UpdateTile()
+        public static void UpdateTile(IList<BackgroundTasks.Bidding> biddingSearchResults)
         {
-            //string xmlString = File.ReadAllText(PathFolder);
-            //string deleteSubstring = "<?xml version=\"1.0\" encoding=\"utf - 8\"?>";
-            //xmlString = xmlString. Replace(deleteSubstring, "\n");
 
-            List<Bidding> objects = new List<Bidding>();
-            XmlSerializer serializer = new XmlSerializer(typeof(Bidding));
-            
-            using (FileStream fileStream = new FileStream(PathFolder, FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
-            {
-                
-                Bidding result = (Bidding)serializer.Deserialize(fileStream);
-                objects.Add(result);
-            }
-
-            // Create a tile update manager for the specified syndication feed.
+            // Create a tile update manager
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
             updater.EnableNotificationQueue(true);
             updater.Clear();
