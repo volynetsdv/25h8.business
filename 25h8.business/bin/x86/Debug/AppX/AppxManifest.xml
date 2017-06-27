@@ -57,10 +57,12 @@
       <InProcessServer>
         <Path>25h8.business.exe</Path>
         <ActivatableClass ActivatableClassId="BackgroundTasks.RunClass" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.TitleUpdater" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.Owner" ThreadingModel="both" />
-        <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="BackgroundTasks.Bid" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.Bidding" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.Models.XmlDeserializer" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.Models.XmlOwner" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="BackgroundTasks.TileUpdater" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
   </Extensions>

@@ -24,6 +24,7 @@ using Windows.Security.Cryptography.Certificates;
 using System.Text.RegularExpressions;
 using System.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Runtime.Serialization.Formatters;
 
 namespace BackgroundTasks
 {
@@ -82,8 +83,10 @@ namespace BackgroundTasks
                     string parsedString = Regex.Unescape(httpSerialize);
                     byte[] isoBites = Encoding.GetEncoding("ISO-8859-1").GetBytes(parsedString);
                     string jsonText = Encoding.UTF8.GetString(isoBites, 0, isoBites.Length);
+                    
                     if (jsonText != null)
-                        return jsonText;
+                        File.WriteAllText(PathFolder, jsonText);
+                    return jsonText;
                    
                     else
                         return null;
@@ -114,51 +117,42 @@ namespace BackgroundTasks
             {
                 try
                 {
-                    var searchBidOwner = res.ToString();
-                    var json1 = JObject.Parse(searchBidOwner);
-                    var ownerList = json1["owner"].ToObject<Owner>(); //практически такой же как resultList, но уже готовый к приведению к объекту
-                    // JToken.ToObject is a helper method that uses JsonSerializer internally
                     var searchResult = res.ToObject<Bidding>();
-                    searchResult.ContractorName = ownerList.ContractorName;
-                    searchResult.LogoURL = ownerList.LogoURL;
+                    searchResult.EntityType = searchResult.EntityType.Equals("bid") ? "Заявка" : @"аукцион\редукцион";
                     biddingSearchResults.Add(searchResult);
                 }
                 catch (Exception) //на 3-й итерации цикла приходит пустой "owner", что вызывает ошибку
                 {
-                    var searchResult = res.ToObject<Bidding>();
-                    searchResult.ContractorName = "Продавец не указан";
-                    //searchResult.LogoURL = "";
-                    biddingSearchResults.Add(searchResult);
+                    continue;
                 }
 
             }
             return biddingSearchResults;
         }
 
-        // Cохраняем результат в файл
+        // Проводим серриализацию в XML и сохраняем результат в файл
         private void Save(List<Bidding> biddingSearchResults) 
         {
-            var willSaveThisResult = biddingSearchResults;
-
             File.Delete(PathFolder);
             //Проводим серриализацию полученных объектов в XML и сохраняем в файл
 
             var bidSaver = new XmlSerializer(typeof(Bid));
             var biddingSaver = new XmlSerializer(typeof(Bidding));
 
-            for (int i = 0; i < willSaveThisResult.Count; i++)
+            for (int i = 0; i < biddingSearchResults.Count; i++)
             {
-                if (willSaveThisResult[i].Title != null)
+                if (biddingSearchResults[i].Title != null)
                 {
-                    if (willSaveThisResult[i].EntityType.Equals("bid"))
-                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
+                    if (biddingSearchResults[i].EntityType.Equals("Заявка"))
+                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
                         {
-                            bidSaver.Serialize(fs, willSaveThisResult[i]);
+
+                            bidSaver.Serialize(fs, biddingSearchResults[i]);
                         }
                     else
-                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
+                        using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
                         {
-                            biddingSaver.Serialize(fs, willSaveThisResult[i]);
+                            biddingSaver.Serialize(fs, biddingSearchResults[i]);
                         }
                 }
             }
@@ -167,7 +161,7 @@ namespace BackgroundTasks
 
  
         static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
-        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
+        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.xml"); //адрес файла в "title.xml" в системе
 
     }
 }

@@ -107,12 +107,14 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Bid.cs" />
-    <Compile Include="Bidding.cs" />
-    <Compile Include="Owner.cs" />
+    <Compile Include="Models\Bid.cs" />
+    <Compile Include="Models\Bidding.cs" />
+    <Compile Include="Models\Owner.cs" />
     <Compile Include="RunClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileUpdater.cs" />
+    <Compile Include="Models\XmlDeserializer .cs" />
+    <Compile Include="Models\XmlOwner.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Json.NET.Web">
@@ -139,6 +141,7 @@
       <HintPath>C:\Users\volin\.nuget\packages\MSTest.TestFramework\1.1.17\lib\uap10.0\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

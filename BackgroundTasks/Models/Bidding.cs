@@ -4,7 +4,7 @@ using System;
 namespace BackgroundTasks
 {
     [Serializable]
-    public sealed class Bid
+    public sealed class Bidding
     {
         [JsonProperty(PropertyName = "entityType")]
         public string EntityType { get; set; }
@@ -15,25 +15,27 @@ namespace BackgroundTasks
         [JsonProperty(PropertyName = "proc")]
         public string Process { get; set; }
 
-        [JsonProperty(PropertyName = "contractorName")]
-        public string ContractorName { get; set; }
-
-        [JsonProperty(PropertyName = "contractorAvatarUrl")]
-        public string LogoUrl { get; set; }
-
         [JsonProperty(PropertyName = "Id")]
         public int Id { get; set; }
 
-        public Bid() { }
+        [JsonProperty(PropertyName = "state")]
+        public string State { get; set; }
 
-        public Bid(string entityType, string title, string process, string contractorName, string logoUrl, int id)
+        [JsonProperty(PropertyName = "owner")]
+        public Owner Owner { get; set; }
+
+        public Bidding() { }
+
+        public Bidding(string entityType, string title, string process, string contractorName, string logoURL, int id, string state, Owner owner)
         {
             EntityType = entityType;
             Title = title;
             Process = process;
-            ContractorName = contractorName;
-            LogoUrl = logoUrl;
             Id = id;
+            State = state;
+            Owner = owner;
+
         }
+
     }
 }

@@ -1,21 +1,38 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+﻿using System;
+using BackgroundTasks.Models;
+using Microsoft.Toolkit.Uwp.Notifications;
 using System.Diagnostics;
 using System.IO;
+using System.Xml.Serialization;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
-
+using System.Collections.Generic;
 
 namespace BackgroundTasks
 {
     public sealed class TileUpdater
     {
         static string textElementName = "title";
-        static StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
-        static string PathFolder = Path.Combine(GetLocalFolder.Path, "title.xml"); //адрес файла в "title.xml" в системе
+        static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
+        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.xml"); //адрес файла в "title.xml" в системе
 
         public static void UpdateTile()
         {
+            //string xmlString = File.ReadAllText(PathFolder);
+            //string deleteSubstring = "<?xml version=\"1.0\" encoding=\"utf - 8\"?>";
+            //xmlString = xmlString. Replace(deleteSubstring, "\n");
+
+            List<Bidding> objects = new List<Bidding>();
+            XmlSerializer serializer = new XmlSerializer(typeof(Bidding));
+            
+            using (FileStream fileStream = new FileStream(PathFolder, FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
+            {
+                
+                Bidding result = (Bidding)serializer.Deserialize(fileStream);
+                objects.Add(result);
+            }
+
             // Create a tile update manager for the specified syndication feed.
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
             updater.EnableNotificationQueue(true);
