@@ -18,13 +18,13 @@ namespace BackgroundTasks
         //Отправка локального уведомления на плитку: https://blogs.msdn.microsoft.com/tiles_and_toasts/2015/10/05/quickstart-sending-a-local-tile-notification-in-windows-10/
         //Все вместе:https://github.com/WindowsNotifications/NotificationsExtensions/wiki/Tile-Notifications
         //но ничего не выходит
-
+        
         static string textElementName = "title";
         static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
         
         static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.xml"); //адрес файла в "title.xml" в системе
         
-        public static void UpdateTile(IList<Bidding> biddingSearchResults)
+        public void UpdateTile(IList<Bidding> biddingSearchResults)
         {
             
             // Create a tile update manager

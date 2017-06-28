@@ -46,9 +46,11 @@ namespace BackgroundTasks
             await GetJson(); 
 
             var biddingSearchResults = ReadJson();
-                        
+
             // Update the live tile with the feed items.
-            TileUpdater.UpdateTile(biddingSearchResults);
+            var tileUpdater = new TileUpdater();
+            tileUpdater.UpdateTile(biddingSearchResults);
+            
 
             // Inform the system that the task is finished.
             deferral.Complete();
