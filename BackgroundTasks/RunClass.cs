@@ -45,7 +45,7 @@ namespace BackgroundTasks
             // Download the and save JSON to file.
             await GetJson(); 
 
-            var biddingSearchResults = LoadBidJson();
+            var biddingSearchResults = ReadJson();
                         
             // Update the live tile with the feed items.
             TileUpdater.UpdateTile(biddingSearchResults);
@@ -85,8 +85,8 @@ namespace BackgroundTasks
                         catch
                         {
                             int timeout = 5000;
-                            Task task = Task.Run(() => File.Delete(PathFolder));
-                            task.Wait(timeout);
+                            Task deleteTask = Task.Run(() => File.Delete(PathFolder));
+                            deleteTask.Wait(timeout);
                         }
                         File.WriteAllText(PathFolder, jsonText);
                     }
@@ -103,7 +103,7 @@ namespace BackgroundTasks
         // Проводим дессериализацию
         // Дессериализация выполняется по следующему примеру: 
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
-        private static IList<Bidding> LoadBidJson()
+        private static IList<Bidding> ReadJson()
         {
             var jsonText = File.ReadAllText(PathFolder);
             var json = JObject.Parse(jsonText);
@@ -117,15 +117,27 @@ namespace BackgroundTasks
                 try
                 {
                     var searchResult = res.ToObject<Bidding>();
-                    searchResult.EntityType = searchResult.EntityType.Equals("bid") ? "Заявка" : @"аукцион\редукцион";
+                    if (searchResult.Title == null)
+                    {continue;}
+                    
+                    searchResult.EntityType = searchResult.EntityType.Equals("bid") ? "Заявка" : "аукцион\\редукцион";
                     biddingSearchResults.Add(searchResult);
                 }
                 catch (Exception) //на 3-й итерации цикла приходит пустой "owner", что вызывает ошибку
                 {
                     continue;
                 }
-
             }
+            //случайная сортировка элеметов списка, согласно ТЗ
+            for (int i = biddingSearchResults.Count - 1; i >= 1; i--)
+            {
+                var random = new Random();
+                var j = random.Next(i + 1);     
+                var temp = biddingSearchResults[j];
+                biddingSearchResults[j] = biddingSearchResults[i];
+                biddingSearchResults[i] = temp;
+            }
+            
             return biddingSearchResults;
         }
 

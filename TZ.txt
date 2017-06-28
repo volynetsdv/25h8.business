@@ -28,3 +28,7 @@ List<Bidding>
 {{"entityType": "bidding",
   "owner": {"contractorName": "Фьюри Ник Фф",}
 }}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
