@@ -17,48 +17,27 @@ namespace BackgroundTasks
         //настройка внешнего вида: https://blogs.msdn.microsoft.com/tiles_and_toasts/2015/06/30/adaptive-tile-templates-schema-and-documentation/
         //Отправка локального уведомления на плитку: https://blogs.msdn.microsoft.com/tiles_and_toasts/2015/10/05/quickstart-sending-a-local-tile-notification-in-windows-10/
         //Все вместе:https://github.com/WindowsNotifications/NotificationsExtensions/wiki/Tile-Notifications
-        //но ничего не выходит
-        
-        static string textElementName = "title";
-        static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
-        
-        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.xml"); //адрес файла в "title.xml" в системе
-        
+
+
+        static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;        
+        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.json"); //адрес файла в "data.json" в системе
+
         public void UpdateTile(IList<Bidding> biddingSearchResults)
         {
             
-            // Create a tile update manager
+            // Create a tile update manager 
+            // не факт, что он будет нужен, но все может быть
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
             updater.EnableNotificationQueue(true);
             //updater.Clear();  //судя по прочтенной информации - нам не нужно будет очищать плитку, но на всякий случай не удаляю          
 
-            //этот код должен отправлять уведомление на политку:
-            var notification = new TileNotification(content.GetXml()); //какая нафиг ссылка на обыект? А  content это не объект? Я его даже паблик сделал
+            //этот код отправляет уведомление на политку используя содержимое из "content":
+            var notification = new TileNotification(content.GetXml()); 
             TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
 
-            //Не могу понять, как работать с странным выражением ниже, 
-            //которое начинается вот так: TileContent content = new TileContent())
-
-            //___старый кусок кода________________________________________________________________
-            //// Create a tile notification 
-            ////Для разных размеров плитки создадим  несколько таких строчек с "шаблонами тайлов":
-            //XmlDocument tileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150Text03);
-            ////здесь должен быть цикл. [0] - это индекс элемента
-            //tileXml.GetElementsByTagName(textElementName)[0].InnerText = File.ReadAllText(PathFolder);
-
-            //// Create a new tile notification.
-            //if (tileXml != null)
-            //{
-            //    updater.Update(new TileNotification(tileXml));
-            //}
-            //else
-            //    Debug.WriteLine(":((("); ;
-            //// Don't create more than 5 notifications.
-            ////if (itemCount++ > 10) break;
-            //____________________________________________________________________________________
         }
 
-
+        //По сути - это инструкция, которая сообщает системе, какие данные и как выводить на плитку.
         private TileContent content = new TileContent()
         {
             Visual = new TileVisual()

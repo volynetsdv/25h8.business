@@ -57,7 +57,7 @@ namespace BackgroundTasks
 
         }
 
-        //получаем ответ от JSON в виде строки
+        //получаем ответ от JSON в виде строки и сохраняем в файл data.json
         //вынуждены использовать HttpBaseProtocolFilter для получения данных от не защищенного АПИ (отсувствует сертификат SSL)
         private static async Task GetJson()
         {
@@ -107,8 +107,7 @@ namespace BackgroundTasks
         //http://www.newtonsoft.com/json/help/html/SerializingJSONFragments.htm#
         private static IList<Bidding> ReadJson()
         {
-            var jsonText = File.ReadAllText(PathFolder);
-            var json = JObject.Parse(jsonText);
+            var json = JObject.Parse(File.ReadAllText(PathFolder));
             // собираем JSON resultList objects в список объектов
             var resultList = json["result"].Children().ToList();
             
@@ -120,8 +119,7 @@ namespace BackgroundTasks
                 {
                     var searchResult = res.ToObject<Bidding>();
                     if (searchResult.Title == null)
-                    {continue;}
-                    
+                    {continue;}                   
                     searchResult.EntityType = searchResult.EntityType.Equals("bid") ? "Заявка" : "аукцион\\редукцион";
                     biddingSearchResults.Add(searchResult);
                 }

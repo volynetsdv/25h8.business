@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Models\Bid.cs" />
     <Compile Include="Models\Bidding.cs" />
+    <Compile Include="Models\NotificationUpdater.cs" />
     <Compile Include="Models\Owner.cs" />
     <Compile Include="RunClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
