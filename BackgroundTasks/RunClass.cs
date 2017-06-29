@@ -43,8 +43,9 @@ namespace BackgroundTasks
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
 
             // Download the and save JSON to file.
-            await GetJson(); 
+            await GetJson();
 
+            //Read data from JSON file
             var biddingSearchResults = ReadJson();
 
             // Update the live tile with the feed items.

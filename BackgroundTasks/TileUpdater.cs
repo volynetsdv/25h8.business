@@ -24,40 +24,51 @@ namespace BackgroundTasks
 
         public void UpdateTile(IList<Bidding> biddingSearchResults)
         {
-            
-            // Create a tile update manager 
+                        // Create a tile update manager 
             // не факт, что он будет нужен, но все может быть
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
             updater.EnableNotificationQueue(true);
             //updater.Clear();  //судя по прочтенной информации - нам не нужно будет очищать плитку, но на всякий случай не удаляю          
 
-            //этот код отправляет уведомление на политку используя содержимое из "content":
-            var notification = new TileNotification(content.GetXml()); 
-            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
+            for (int i = 0; i < biddingSearchResults.Count; i++)
+            {
+                title = biddingSearchResults[i].Title;
+                contractorName = biddingSearchResults[i].Owner.ContractorName;
+                logoURL = biddingSearchResults[i].Owner.LogoURL;
+                tipe = biddingSearchResults[i].EntityType;
+                //этот код отправляет уведомление на политку используя содержимое из "content":
+                var notification = new TileNotification(content.GetXml());
+                updater.Update(notification);
+            }
+
+            
+
 
         }
+        //Переменные, которые выводятся на политку:
+        private static string title = "";
+        private static string contractorName = "";
+        private static string logoURL = "";
+        private static string tipe = "";
+
 
         //По сути - это инструкция, которая сообщает системе, какие данные и как выводить на плитку.
         private TileContent content = new TileContent()
         {
             Visual = new TileVisual()
             {
-                Branding = TileBranding.Logo,
-                //DisplayName = "Wednesday 22", //вместо дня и даты задать ссылку на тип Bid Bidding (отобр. внизу слева)
+                Branding = TileBranding.NameAndLogo,
+                DisplayName = tipe, //вместо дня и даты задать ссылку на тип Bid Bidding (отобр. внизу слева)
                 TileSmall = new TileBinding()
                 {
-                    //{		//задаем подпись и лого в нижней части плитки. 
-                    //Прописать для всех размеров
-                    //Branding = TileBranding.Logo,
-                    //...
-                    //},
+                   Branding = TileBranding.Logo,//задаем подпись и лого в нижней части плитки.//Прописать для всех размеров
                     Content = new TileBindingContentAdaptive()
                     {
                         Children =
                         {
                             new AdaptiveText()
                             {
-                                Text = "Small",
+                                Text = title,
                                 HintWrap = true,
                                 HintStyle = AdaptiveTextStyle.Base,
                                 HintAlign = AdaptiveTextAlign.Center
@@ -71,6 +82,7 @@ namespace BackgroundTasks
                 //Branding = TileBranding.NameAndLogo,
                 TileMedium = new TileBinding()
                 {
+                    DisplayName = tipe,
                     Content = new TileBindingContentAdaptive()
                     {
                         //фоновое изображение:
@@ -81,15 +93,22 @@ namespace BackgroundTasks
                         //изображение обновляемое вместе с уведомлением. 
                         PeekImage = new TilePeekImage()
                         {
-                            Source = "Assets/Map.jpg",
+                            Source = logoURL,
                             HintOverlay = 20
                         },
                         Children =
                         {
-                            new AdaptiveText() {Text = "title",
+                            new AdaptiveText() {Text = title,
                                 HintWrap = true,
                                 HintStyle = AdaptiveTextStyle.Base,
-                                HintAlign = AdaptiveTextAlign.Center}
+                                HintAlign = AdaptiveTextAlign.Center},
+
+                            new AdaptiveText()
+                            {
+                                Text = contractorName,
+                                HintWrap = true,
+                                HintStyle = AdaptiveTextStyle.CaptionSubtle //Утонченный шрифт с 60% прозрачностью
+                            }
                             //здесь добавляем текст так же как в TileWide
                         }
                     }
@@ -97,25 +116,29 @@ namespace BackgroundTasks
 
                 TileWide = new TileBinding()
                 {
+                    DisplayName = tipe,
                     Content = new TileBindingContentAdaptive()
                     {
                         Children =
                         {
                             new AdaptiveText()
                             {
-                                Text = "Jennifer Parker",
+                                Text = title,
+                                HintWrap = true,
                                 HintStyle = AdaptiveTextStyle.Subtitle
                             },
 
                             new AdaptiveText()
                             {
-                                Text = "Photos from our trip",
+                                Text = contractorName,
+                                HintWrap = true,
                                 HintStyle = AdaptiveTextStyle.CaptionSubtle //Утонченный шрифт с 60% прозрачностью
                             },
 
                             new AdaptiveText()
                             {
-                                Text = "Check out these awesome photos I took while in New Zealand!",
+                                Text = tipe,
+                                HintWrap = true,
                                 HintStyle = AdaptiveTextStyle.CaptionSubtle
                             }
                         }
@@ -124,6 +147,7 @@ namespace BackgroundTasks
                 //большая плитка
                 TileLarge = new TileBinding()
                 {
+                    DisplayName = tipe,
                     Content = new TileBindingContentAdaptive()
                     {
                         TextStacking = TileTextStacking.Center,
@@ -141,7 +165,7 @@ namespace BackgroundTasks
                                         {
                                             new AdaptiveImage()
                                             {
-                                                Source = "Assets/Apps/Hipstame/hipster.jpg",
+                                                Source = logoURL,
                                                 HintCrop = AdaptiveImageCrop.Circle
                                             }
                                         }
@@ -151,13 +175,13 @@ namespace BackgroundTasks
                             },
                             new AdaptiveText()
                             {
-                                Text = "Hi,",
+                                Text = title,
                                 HintStyle = AdaptiveTextStyle.Title,
                                 HintAlign = AdaptiveTextAlign.Center
                             },
                             new AdaptiveText()
                             {
-                                Text = "MasterHip",
+                                Text = contractorName,
                                 HintStyle = AdaptiveTextStyle.SubtitleSubtle,
                                 HintAlign = AdaptiveTextAlign.Center
                             }
