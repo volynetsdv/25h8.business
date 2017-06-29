@@ -141,36 +141,6 @@ namespace BackgroundTasks
             
             return biddingSearchResults;
         }
-
-        // Проводим серриализацию в XML и сохраняем результат в файл
-        //private void Save(List<Bidding> biddingSearchResults) 
-        //{
-        //    File.Delete(PathFolder);
-        //    //Проводим серриализацию полученных объектов в XML и сохраняем в файл
-
-        //    var bidSaver = new XmlSerializer(typeof(Bid));
-        //    var biddingSaver = new XmlSerializer(typeof(Bidding));
-
-        //    for (int i = 0; i < biddingSearchResults.Count; i++)
-        //    {
-        //        if (biddingSearchResults[i].Title != null)
-        //        {
-        //            if (biddingSearchResults[i].EntityType.Equals("Заявка"))
-        //                using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
-        //                {
-
-        //                    bidSaver.Serialize(fs, biddingSearchResults[i]);
-        //                }
-        //            else
-        //                using (FileStream fs = new FileStream(PathFolder, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)) //проблема с созданием слишком большого файла. Не знаю как чистить старые записи
-        //                {
-        //                    biddingSaver.Serialize(fs, biddingSearchResults[i]);
-        //                }
-        //        }
-        //    }
-
-        //}
-
  
         static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;
         static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.json"); //адрес файла в "title.xml" в системе

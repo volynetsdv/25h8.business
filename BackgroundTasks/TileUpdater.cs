@@ -18,14 +18,9 @@ namespace BackgroundTasks
         //Отправка локального уведомления на плитку: https://blogs.msdn.microsoft.com/tiles_and_toasts/2015/10/05/quickstart-sending-a-local-tile-notification-in-windows-10/
         //Все вместе:https://github.com/WindowsNotifications/NotificationsExtensions/wiki/Tile-Notifications
 
-
-        static readonly StorageFolder GetLocalFolder = ApplicationData.Current.LocalFolder;        
-        static readonly string PathFolder = Path.Combine(GetLocalFolder.Path, "data.json"); //адрес файла в "data.json" в системе
-
         public void UpdateTile(IList<Bidding> biddingSearchResults)
         {
-                        // Create a tile update manager 
-            // не факт, что он будет нужен, но все может быть
+            // Create a tile update manager 
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
             updater.EnableNotificationQueue(true);
             //updater.Clear();  //судя по прочтенной информации - нам не нужно будет очищать плитку, но на всякий случай не удаляю          
@@ -40,13 +35,9 @@ namespace BackgroundTasks
                 var notification = new TileNotification(content.GetXml());
                 updater.Update(notification);
             }
-
-            
-
-
         }
         //Переменные, которые выводятся на политку:
-        private static string title = "";
+        private static string title = "ЭТО ТЕСТ";
         private static string contractorName = "";
         private static string logoURL = "";
         private static string tipe = "";
